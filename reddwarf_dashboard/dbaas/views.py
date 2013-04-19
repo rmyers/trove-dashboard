@@ -35,7 +35,7 @@ from horizon import tabs
 from horizon import tables
 from horizon import workflows
 
-from openstack_dashboard import api
+from reddwarf_dashboard import api
 from .tabs import InstanceDetailTabs
 from .tables import InstancesTable
 from .workflows import LaunchInstance, UpdateInstance
@@ -56,10 +56,8 @@ class IndexView(tables.DataTableView):
                         InstancesTable._meta.pagination_param, None)
         # Gather our instances
         try:
-            instances, self._more = api.nova.server_list(
-                                        self.request,
-                                        search_opts={'marker': marker,
-                                                     'paginate': True})
+            instances = api.instance_list(self.request, marker=marker)
+            self._more = False
         except:
             self._more = False
             instances = []
@@ -68,7 +66,7 @@ class IndexView(tables.DataTableView):
         # Gather our flavors and correlate our instances to them
         if instances:
             try:
-                flavors = api.nova.flavor_list(self.request)
+                flavors = api.flavor_list(self.request)
             except:
                 flavors = []
                 exceptions.handle(self.request, ignore=True)
@@ -84,7 +82,7 @@ class IndexView(tables.DataTableView):
                     else:
                         # If the flavor_id is not in full_flavors list,
                         # get it via nova api.
-                        instance.full_flavor = api.nova.flavor_get(
+                        instance.full_flavor = api.flavor_get(
                             self.request, flavor_id)
                 except:
                     msg = _('Unable to retrieve instance size information.')
@@ -157,7 +155,7 @@ class UpdateView(workflows.WorkflowView):
         if not hasattr(self, "_object"):
             instance_id = self.kwargs['instance_id']
             try:
-                self._object = api.nova.server_get(self.request, instance_id)
+                self._object = api.instance_get(self.request, instance_id)
             except:
                 redirect = reverse("horizon:project:instances:index")
                 msg = _('Unable to retrieve instance details.')
@@ -184,15 +182,15 @@ class DetailView(tabs.TabView):
         if not hasattr(self, "_instance"):
             try:
                 instance_id = self.kwargs['instance_id']
-                instance = api.nova.server_get(self.request, instance_id)
-                instance.volumes = api.nova.instance_volumes_list(self.request,
-                                                                  instance_id)
+                instance = api.instance_get(self.request, instance_id)
+                #instance.volumes = api.nova.instance_volumes_list(self.request,
+                #                                                  instance_id)
                 # Sort by device name
-                instance.volumes.sort(key=lambda vol: vol.device)
-                instance.full_flavor = api.nova.flavor_get(
+                #instance.volumes.sort(key=lambda vol: vol.device)
+                instance.full_flavor = api.flavor_get(
                     self.request, instance.flavor["id"])
-                instance.security_groups = api.nova.server_security_groups(
-                                           self.request, instance_id)
+                #.security_groups = api.nova.server_security_groups(
+                #                           self.request, instance_id)
             except:
                 redirect = reverse('horizon:project:instances:index')
                 exceptions.handle(self.request,

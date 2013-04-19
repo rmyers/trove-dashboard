@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 import horizon
 from openstack_dashboard.dashboards.project.dashboard import Project
 
-from reddwarf.dhorizon import dashboard
+from reddwarf_dashboard import dashboard
 
 
 class Databases(horizon.Panel):
@@ -28,4 +28,4 @@ class Databases(horizon.Panel):
 
 
 dashboard.Dbaas.register(Databases)
-Project.register(Databases)
+#Project.register(Databases)
