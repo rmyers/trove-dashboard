@@ -91,7 +91,7 @@ class RebootInstance(tables.BatchAction):
 class LaunchLink(tables.LinkAction):
     name = "launch"
     verbose_name = _("Launch Instance")
-    url = "/database/launch"
+    url = "horizon:database:databases:launch"
     classes = ("btn-launch", "ajax-modal")
 
     def allowed(self, request, datum):
@@ -125,7 +125,7 @@ class LaunchLink(tables.LinkAction):
 class CreateBackup(tables.LinkAction):
     name = "snapshot"
     verbose_name = _("Create Backup")
-    url = "/database/backup"
+    url = "horizon:database:databases:backup"
     classes = ("ajax-modal", "btn-camera")
 
     def allowed(self, request, instance=None):
@@ -173,7 +173,7 @@ class InstancesTable(tables.DataTable):
         ("error", False),
     )
     name = tables.Column("name",
-                         link=("horizon:project:instances:detail"),
+                         link=("horizon:database:databases:detail"),
                          verbose_name=_("Database Name"))
     ip = tables.Column(get_ips, verbose_name=_("IP Address"))
     size = tables.Column(get_size,
