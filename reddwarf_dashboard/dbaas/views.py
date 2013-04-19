@@ -38,7 +38,7 @@ from horizon import workflows
 from reddwarf_dashboard import api
 from .tabs import InstanceDetailTabs
 from .tables import InstancesTable
-from .workflows import LaunchInstance, UpdateInstance
+from .workflows import LaunchInstance
 
 
 LOG = logging.getLogger(__name__)
@@ -99,75 +99,6 @@ class LaunchInstanceView(workflows.WorkflowView):
         initial['project_id'] = self.request.user.tenant_id
         initial['user_id'] = self.request.user.id
         return initial
-
-
-def console(request, instance_id):
-    try:
-        # TODO(jakedahn): clean this up once the api supports tailing.
-        tail = request.GET.get('length', None)
-        data = api.nova.server_console_output(request,
-                                              instance_id,
-                                              tail_length=tail)
-    except:
-        data = _('Unable to get log for instance "%s".') % instance_id
-        exceptions.handle(request, ignore=True)
-    response = http.HttpResponse(mimetype='text/plain')
-    response.write(data)
-    response.flush()
-    return response
-
-
-def vnc(request, instance_id):
-    try:
-        console = api.nova.server_vnc_console(request, instance_id)
-        instance = api.nova.server_get(request, instance_id)
-        return shortcuts.redirect(console.url +
-                ("&title=%s(%s)" % (instance.name, instance_id)))
-    except:
-        redirect = reverse("horizon:project:instances:index")
-        msg = _('Unable to get VNC console for instance "%s".') % instance_id
-        exceptions.handle(request, msg, redirect=redirect)
-
-
-def spice(request, instance_id):
-    try:
-        console = api.nova.server_spice_console(request, instance_id)
-        instance = api.nova.server_get(request, instance_id)
-        return shortcuts.redirect(console.url +
-                ("&title=%s(%s)" % (instance.name, instance_id)))
-    except:
-        redirect = reverse("horizon:project:instances:index")
-        msg = _('Unable to get SPICE console for instance "%s".') % instance_id
-        exceptions.handle(request, msg, redirect=redirect)
-
-
-class UpdateView(workflows.WorkflowView):
-    workflow_class = UpdateInstance
-    template_name = 'dbaas/update.html'
-    success_url = reverse_lazy("horizon:project:instances:index")
-
-    def get_context_data(self, **kwargs):
-        context = super(UpdateView, self).get_context_data(**kwargs)
-        context["instance_id"] = self.kwargs['instance_id']
-        return context
-
-    def get_object(self, *args, **kwargs):
-        if not hasattr(self, "_object"):
-            instance_id = self.kwargs['instance_id']
-            try:
-                self._object = api.instance_get(self.request, instance_id)
-            except:
-                redirect = reverse("horizon:project:instances:index")
-                msg = _('Unable to retrieve instance details.')
-                exceptions.handle(self.request, msg, redirect=redirect)
-        return self._object
-
-    def get_initial(self):
-        initial = super(UpdateView, self).get_initial()
-        initial.update({'instance_id': self.kwargs['instance_id'],
-                'name': getattr(self.get_object(), 'name', '')})
-        return initial
-
 
 class DetailView(tabs.TabView):
     tab_group_class = InstanceDetailTabs

@@ -48,6 +48,14 @@ def instance_list(request, limit=None, marker=None):
 def instance_get(request, instance_id):
     return rdclient(request).instances.get(instance_id)
 
+def instance_create(request, name, volume, flavor, databases=None, users=None,
+                    restore_point=None):
+    vol = {'size': volume}
+    return rdclient(request).instances.create(name, flavor, vol,
+                                              databases=databases,
+                                              users=users,
+                                              restorePoint=restore_point)
+
 def backup_list(request):
     return rdclient(request).backups.list()
 

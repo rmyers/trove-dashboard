@@ -81,6 +81,44 @@ class SetInstanceDetails(workflows.Step):
     contributes = ("name", "volume", "flavor")
 
 
+class AddDatabasesAction(workflows.Action):
+    database_name = forms.CharField(label=_('Initial Database'),
+                                    required=False,
+                                    help_text=_('Create initial database'))
+
+    class Meta:
+        name = _("Initialize Databases")
+        help_text_template = ("dbaas/_launch_initialize_help.html")
+
+class InitializeDatabase(workflows.Step):
+    action_class = AddDatabasesAction
+    contributes = ["database_name"]
+
+
+class RestoreAction(workflows.Action):
+    backup = forms.ChoiceField(label=_("Backup"),
+                               required=False,
+                               help_text=_('Select a backup to Restore'))
+
+    class Meta:
+        name = _("Restore From Backup")
+        help_text_template = ("dbaas/_launch_restore_help.html")
+
+    def populate_restore_point_choices(self, request, context):
+        try:
+            backups = rd_api.backup_list(request)
+            # TODO (rmyers): add in the date/sort by the latest?
+            backup_list = [(b.id, b.name) for b in backups]
+        except:
+            backup_list = []
+        return backup_list
+
+
+class RestoreBackup(workflows.Step):
+    action_class = RestoreAction
+    contributes = ['backup']
+
+
 class LaunchInstance(workflows.Workflow):
     slug = "launch_database"
     name = _("Launch Database")
@@ -88,7 +126,7 @@ class LaunchInstance(workflows.Workflow):
     success_message = _('Launched %(count)s named "%(name)s".')
     failure_message = _('Unable to launch %(count)s named "%(name)s".')
     success_url = "horizon:database"
-    default_steps = (SetInstanceDetails,)
+    default_steps = (SetInstanceDetails, InitializeDatabase, RestoreBackup)
 
     def format_status_message(self, message):
         name = self.context.get('name', 'unknown instance')
@@ -96,10 +134,11 @@ class LaunchInstance(workflows.Workflow):
 
     def handle(self, request, context):
         try:
-            api.nova.server_create(request,
+            rd_api.instance_create(request,
                                    context['name'],
                                    context['volume'],
                                    context['flavor'])
+            # TODO (rmyers): handle databases, users, restore_point
             return True
         except:
             exceptions.handle(request)
