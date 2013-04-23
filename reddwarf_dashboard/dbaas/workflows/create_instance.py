@@ -125,7 +125,7 @@ class LaunchInstance(workflows.Workflow):
     finalize_button_name = _("Launch")
     success_message = _('Launched %(count)s named "%(name)s".')
     failure_message = _('Unable to launch %(count)s named "%(name)s".')
-    success_url = "horizon:database"
+    success_url = "horizon:database:databases:index"
     default_steps = (SetInstanceDetails, InitializeDatabase, RestoreBackup)
 
     def format_status_message(self, message):
