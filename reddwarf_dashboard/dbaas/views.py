@@ -112,6 +112,8 @@ class DetailView(tabs.TabView):
                 instance = api.instance_get(self.request, instance_id)
                 instance.full_flavor = api.flavor_get(
                     self.request, instance.flavor["id"])
+                instance.databases = api.database_list(self.request,
+                                                       instance_id)
             except:
                 redirect = reverse('horizon:database:databases:index')
                 exceptions.handle(self.request,

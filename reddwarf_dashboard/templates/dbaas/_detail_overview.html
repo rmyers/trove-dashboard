@@ -32,3 +32,15 @@
     {% endwith %}
   </dl>
 </div>
+
+{% if instance.databases %}
+<div class="addresses row-fluid detail">
+  <h4>{% trans "Databases" %}</h4>
+  <hr class="header_rule">
+  <ul>
+     {% for database in instance.databases %}
+     <li>{{ database.name }} {{ database.collation }} {{ database.charset }}</li>
+     {% endfor %}
+  </ul>
+</div>
+{% endif %}

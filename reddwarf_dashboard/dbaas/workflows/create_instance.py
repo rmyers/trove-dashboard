@@ -82,17 +82,31 @@ class SetInstanceDetails(workflows.Step):
 
 
 class AddDatabasesAction(workflows.Action):
-    database_name = forms.CharField(label=_('Initial Database'),
-                                    required=False,
-                                    help_text=_('Create initial database'))
+    databases = forms.CharField(label=_('Initial Database'),
+                                required=False,
+                                help_text=_('Comma separated list of '
+                                            'databases to create'))
+    user = forms.CharField(label=_('Initial Admin User'),
+                           required=False,
+                           help_text=_("Initial admin user to add"))
+    password = forms.CharField(widget=forms.PasswordInput(),
+                               label=_("Password"),
+                               required=False)
 
     class Meta:
         name = _("Initialize Databases")
         help_text_template = ("dbaas/_launch_initialize_help.html")
 
+    def clean(self):
+        cleaned_data = super(AddDatabasesAction, self).clean()
+        if cleaned_data.get('user') and not cleaned_data.get('password'):
+            msg = _('You must specify a password if you create a user.')
+            self._errors["password"] = self.error_class([msg])
+        return cleaned_data
+
 class InitializeDatabase(workflows.Step):
     action_class = AddDatabasesAction
-    contributes = ["database_name"]
+    contributes = ["databases", 'user', 'password']
 
 
 class RestoreAction(workflows.Action):
@@ -133,11 +147,15 @@ class LaunchInstance(workflows.Workflow):
         return message % {"count": _("instance"), "name": name}
 
     def handle(self, request, context):
+        databases = None
+        if context['databases']:
+            databases = [{'name': d} for d in context['databases'].split(',')]
         try:
             rd_api.instance_create(request,
                                    context['name'],
                                    context['volume'],
-                                   context['flavor'])
+                                   context['flavor'],
+                                   databases=databases)
             # TODO (rmyers): handle databases, users, restore_point
             return True
         except:
