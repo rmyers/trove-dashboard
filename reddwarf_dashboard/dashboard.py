@@ -6,11 +6,11 @@ import horizon
 class ReddwarfPanels(horizon.PanelGroup):
     slug = "database"
     name = _("Manage Databases")
-    panels = ['dbaas']
+    panels = ['dbaas', 'backup']
 
 
 class Dbaas(horizon.Dashboard):
-    name = _("Database")
+    name = _("Databases")
     slug = "database"
     panels = [ReddwarfPanels]
     default_panel = 'databases'

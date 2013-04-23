@@ -1,5 +1,5 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
-
+#
 # Copyright 2013 Rackspace Hosting
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,16 +14,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django.utils.translation import ugettext_lazy as _
+from django.conf.urls.defaults import patterns, url
 
-import horizon
+from .views import IndexView
 
-from reddwarf_dashboard import dashboard
-
-
-class Databases(horizon.Panel):
-    name = _("Database Instances")
-    slug = 'databases'
-
-
-dashboard.Dbaas.register(Databases)
+urlpatterns = patterns('reddwarf_dashboard.backup.views',
+    url(r'^$', IndexView.as_view(), name='index'),
+)

@@ -56,8 +56,11 @@ def instance_create(request, name, volume, flavor, databases=None, users=None,
                                               users=users,
                                               restorePoint=restore_point)
 
-def backup_list(request):
+def backup_list(request, limit=None, marker=None):
     return rdclient(request).backups.list()
+
+def backup_get(request, backup_id):
+    return rdclient(request).backups.get(backup_id)
 
 def flavor_list(request):
     return rdclient(request).flavors.list()

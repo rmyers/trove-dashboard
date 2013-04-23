@@ -16,11 +16,7 @@
 
 import logging
 
-from django import shortcuts
-from django import template
-from django.core import urlresolvers
 from django.template.defaultfilters import title
-from django.utils.http import urlencode
 from django.utils.translation import string_concat, ugettext_lazy as _
 
 from horizon.conf import HORIZON_CONFIG
@@ -31,7 +27,6 @@ from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
 
 from reddwarf_dashboard import api
-from .tabs import InstanceDetailTabs, LogTab, ConsoleTab
 
 
 LOG = logging.getLogger(__name__)

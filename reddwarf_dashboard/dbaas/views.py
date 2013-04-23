@@ -1,10 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright 2012 United States Government as represented by the
-# Administrator of the National Aeronautics and Space Administration.
-# All Rights Reserved.
-#
-# Copyright 2012 Nebula, Inc.
+# Copyright 2013 Rackspace Hosting
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -114,16 +110,10 @@ class DetailView(tabs.TabView):
             try:
                 instance_id = self.kwargs['instance_id']
                 instance = api.instance_get(self.request, instance_id)
-                #instance.volumes = api.nova.instance_volumes_list(self.request,
-                #                                                  instance_id)
-                # Sort by device name
-                #instance.volumes.sort(key=lambda vol: vol.device)
                 instance.full_flavor = api.flavor_get(
                     self.request, instance.flavor["id"])
-                #.security_groups = api.nova.server_security_groups(
-                #                           self.request, instance_id)
             except:
-                redirect = reverse('horizon:project:instances:index')
+                redirect = reverse('horizon:database:databases:index')
                 exceptions.handle(self.request,
                                   _('Unable to retrieve details for '
                                     'instance "%s".') % instance_id,

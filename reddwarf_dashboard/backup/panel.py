@@ -21,9 +21,9 @@ import horizon
 from reddwarf_dashboard import dashboard
 
 
-class Databases(horizon.Panel):
-    name = _("Database Instances")
-    slug = 'databases'
+class Backups(horizon.Panel):
+    name = _("Backups")
+    slug = 'backups'
 
 
-dashboard.Dbaas.register(Databases)
+dashboard.Dbaas.register(Backups)
