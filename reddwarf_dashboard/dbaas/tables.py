@@ -16,12 +16,10 @@
 
 import logging
 
+from django.core import urlresolvers
 from django.template.defaultfilters import title
 from django.utils.translation import string_concat, ugettext_lazy as _
 
-from horizon.conf import HORIZON_CONFIG
-from horizon import exceptions
-from horizon import messages
 from horizon import tables
 from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
@@ -67,12 +65,12 @@ class TerminateInstance(tables.BatchAction):
         api.instance_delete(request, obj_id)
 
 
-class RebootInstance(tables.BatchAction):
-    name = "reboot"
-    action_present = _("Hard Reboot")
-    action_past = _("Hard Rebooted")
-    data_type_singular = _("Instance")
-    data_type_plural = _("Instances")
+class RestartInstance(tables.BatchAction):
+    name = "restart"
+    action_present = _("Restart")
+    action_past = _("Restarted")
+    data_type_singular = _("Database")
+    data_type_plural = _("Databases")
     classes = ('btn-danger', 'btn-reboot')
 
     def allowed(self, request, instance=None):
@@ -80,7 +78,7 @@ class RebootInstance(tables.BatchAction):
                  or instance.status == 'SHUTOFF'))
 
     def action(self, request, obj_id):
-        api.instance_reboot(request, obj_id)
+        api.instance_restart(request, obj_id)
 
 
 class LaunchLink(tables.LinkAction):
@@ -90,42 +88,21 @@ class LaunchLink(tables.LinkAction):
     classes = ("btn-launch", "ajax-modal")
 
     def allowed(self, request, datum):
-        try:
-            limits = api.nova.tenant_absolute_limits(request, reserved=True)
-
-            instances_available = limits['maxTotalInstances'] \
-                - limits['totalInstancesUsed']
-            cores_available = limits['maxTotalCores'] \
-                - limits['totalCoresUsed']
-            ram_available = limits['maxTotalRAMSize'] - limits['totalRAMUsed']
-
-            if instances_available <= 0 or cores_available <= 0 \
-                    or ram_available <= 0:
-                if "disabled" not in self.classes:
-                    self.classes = [c for c in self.classes] + ['disabled']
-                    self.verbose_name = string_concat(self.verbose_name, ' ',
-                                                      _("(Quota exceeded)"))
-            else:
-                self.verbose_name = _("Launch Instance")
-                classes = [c for c in self.classes if c != "disabled"]
-                self.classes = classes
-        except:
-            LOG.exception("Failed to retrieve quota information")
-            # If we can't get the quota information, leave it to the
-            # API to check when launching
-
         return True  # The action should always be displayed
 
 
 class CreateBackup(tables.LinkAction):
-    name = "snapshot"
+    name = "backup"
     verbose_name = _("Create Backup")
-    url = "horizon:database:databases:backup"
+    url = "horizon:database:backups:create"
     classes = ("ajax-modal", "btn-camera")
 
     def allowed(self, request, instance=None):
         return instance.status in ACTIVE_STATES
 
+    def get_link_url(self, datam):
+        url = urlresolvers.reverse(self.url)
+        return url + "?instance=%s" % datam.id
 
 class UpdateRow(tables.Row):
     ajax = True
@@ -188,4 +165,4 @@ class InstancesTable(tables.DataTable):
         row_class = UpdateRow
         table_actions = (LaunchLink, TerminateInstance)
         row_actions = (CreateBackup,
-                       RebootInstance, TerminateInstance)
+                       RestartInstance, TerminateInstance)

@@ -59,6 +59,9 @@ def instance_create(request, name, volume, flavor, databases=None, users=None,
                                               users=users,
                                               restorePoint=restore_point)
 
+def instance_restart(request, instance_id):
+    return rdclient(request).instances.restart(instance_id)
+
 def database_list(request, instance_id):
     return rdclient(request).databases.list(instance_id)
 
@@ -67,6 +70,9 @@ def backup_list(request, limit=None, marker=None):
 
 def backup_get(request, backup_id):
     return rdclient(request).backups.get(backup_id)
+
+def backup_delete(request, backup_id):
+    return rdclient(request).backups.delete(backup_id)
 
 def backup_create(request, name, instance_id, description=None):
     return rdclient(request).backups.create(name, instance_id, description)

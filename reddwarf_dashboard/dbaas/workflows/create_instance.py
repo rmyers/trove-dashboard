@@ -124,14 +124,15 @@ class RestoreAction(workflows.Action):
         help_text_template = ("dbaas/_launch_restore_help.html")
 
     def populate_backup_choices(self, request, context):
+        empty = [('', '-')]
         try:
             backups = rd_api.backup_list(request)
             backup_list = [(b.id, b.name) for b in backups]
         except:
             backup_list = []
-        return backup_list
+        return empty + backup_list
 
-    def clean_basckup(self):
+    def clean_backup(self):
         backup = self.cleaned_data['backup']
         if backup:
             try:
