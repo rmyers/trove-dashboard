@@ -1,1 +1,1 @@
-from create_instance import *
+from create_instance import LaunchInstance

@@ -27,7 +27,8 @@
     <dd>{{ ipaddress }}</dd>
     <dt>{% trans "Database Port" %}</dt>
     <dd>3306</dd> {# TODO: This should be a config #}
-    <dt>{% trans "Connection Example" %}</dt>
+    <dt>{% trans "Connection Examples" %}</dt>
+    <dd>mysql -h {{ ipaddress }} -u USERNAME -p</dd>
     <dd>mysql://USERNAME:PASSWORD@{{ ipaddress }}:3306/DATABASE</dd>
     {% endwith %}
   </dl>

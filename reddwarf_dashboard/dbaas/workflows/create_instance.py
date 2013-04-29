@@ -1,10 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright 2012 United States Government as represented by the
-# Administrator of the National Aeronautics and Space Administration.
-# All Rights Reserved.
-#
-# Copyright 2012 Nebula, Inc.
+# Copyright 2013 Rackspace Hosting
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -21,7 +17,6 @@
 import json
 import logging
 
-from django.utils.text import normalize_newlines
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
@@ -40,6 +35,8 @@ LOG = logging.getLogger(__name__)
 
 class SetInstanceDetailsAction(workflows.Action):
     name = forms.CharField(max_length=80, label=_("Database Name"))
+    service_type = forms.ChoiceField(label=_("Service Type"),
+                                     help_text=_("Type of database"))
     flavor = forms.ChoiceField(label=_("Flavor"),
                                help_text=_("Size of image to launch."))
     volume = forms.IntegerField(label=_("Volume Size"),
@@ -50,6 +47,10 @@ class SetInstanceDetailsAction(workflows.Action):
     class Meta:
         name = _("Details")
         help_text_template = ("dbaas/_launch_details_help.html")
+
+    def populate_service_type_choices(self, request, context):
+        # TODO: make an api call for this!
+        return [('mysql', 'mysql'), ('percona', 'percona')]
 
     def populate_flavor_choices(self, request, context):
         try:
@@ -68,7 +69,7 @@ class SetInstanceDetailsAction(workflows.Action):
             extra['usages'] = quotas.tenant_quota_usages(self.request)
             extra['usages_json'] = json.dumps(extra['usages'])
             flavors = json.dumps([f._info for f in
-                                       api.nova.flavor_list(self.request)])
+                                  api.nova.flavor_list(self.request)])
             extra['flavors'] = flavors
         except:
             exceptions.handle(self.request,
@@ -78,7 +79,7 @@ class SetInstanceDetailsAction(workflows.Action):
 
 class SetInstanceDetails(workflows.Step):
     action_class = SetInstanceDetailsAction
-    contributes = ("name", "volume", "flavor")
+    contributes = ("name", "volume", "flavor", "service_type")
 
 
 class AddDatabasesAction(workflows.Action):
@@ -92,6 +93,10 @@ class AddDatabasesAction(workflows.Action):
     password = forms.CharField(widget=forms.PasswordInput(),
                                label=_("Password"),
                                required=False)
+    host = forms.CharField(label=_("Host (optional)"),
+                           required=False,
+                           help_text=_("Host or IP that the user is allowed "
+                                       "to connect through."))
 
     class Meta:
         name = _("Initialize Databases")
@@ -106,7 +111,7 @@ class AddDatabasesAction(workflows.Action):
 
 class InitializeDatabase(workflows.Step):
     action_class = AddDatabasesAction
-    contributes = ["databases", 'user', 'password']
+    contributes = ["databases", 'user', 'password', 'host']
 
 
 class RestoreAction(workflows.Action):
@@ -118,14 +123,25 @@ class RestoreAction(workflows.Action):
         name = _("Restore From Backup")
         help_text_template = ("dbaas/_launch_restore_help.html")
 
-    def populate_restore_point_choices(self, request, context):
+    def populate_backup_choices(self, request, context):
         try:
             backups = rd_api.backup_list(request)
-            # TODO (rmyers): add in the date/sort by the latest?
             backup_list = [(b.id, b.name) for b in backups]
         except:
             backup_list = []
         return backup_list
+
+    def clean_basckup(self):
+        backup = self.cleaned_data['backup']
+        if backup:
+            try:
+                # Make sure the user is not "hacking" the form
+                # and that they have access to this backup_id
+                bkup = rd_api.backup_get(self.request, backup)
+                self.cleaned_data['backup'] = bkup.id
+            except:
+                raise forms.ValidationError(_("Unable to find backup!"))
+        return self.cleaned_data
 
 
 class RestoreBackup(workflows.Step):
@@ -146,17 +162,38 @@ class LaunchInstance(workflows.Workflow):
         name = self.context.get('name', 'unknown instance')
         return message % {"count": _("instance"), "name": name}
 
-    def handle(self, request, context):
+    def _get_databases(self, context):
+        """Returns the initial databases for this instance."""
         databases = None
         if context['databases']:
             databases = [{'name': d} for d in context['databases'].split(',')]
+        return databases
+
+    def _get_users(self, context):
+        users = None
+        if context['user']:
+            user = {'name': context['user'], 'password': context['password']}
+            if context['host']:
+                user['host'] = context['host']
+            users = [user]
+        return users
+
+    def _get_backup(self, context):
+        backup = None
+        if context['backup']:
+            backup = {'backupId': context['backup']}
+        return backup
+
+    def handle(self, request, context):
         try:
             rd_api.instance_create(request,
                                    context['name'],
                                    context['volume'],
                                    context['flavor'],
-                                   databases=databases)
-            # TODO (rmyers): handle databases, users, restore_point
+                                   databases=self._get_databases(context),
+                                   users=self._get_users(context),
+                                   restore_point=self._get_backup(context))
+            # TODO (rmyers): restore_point
             return True
         except:
             exceptions.handle(request)

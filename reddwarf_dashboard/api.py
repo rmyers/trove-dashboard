@@ -68,6 +68,9 @@ def backup_list(request, limit=None, marker=None):
 def backup_get(request, backup_id):
     return rdclient(request).backups.get(backup_id)
 
+def backup_create(request, name, instance_id, description=None):
+    return rdclient(request).backups.create(name, instance_id, description)
+
 def flavor_list(request):
     return rdclient(request).flavors.list()
 

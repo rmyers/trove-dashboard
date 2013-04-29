@@ -30,6 +30,7 @@ from horizon import workflows
 
 from reddwarf_dashboard import api
 from .tables import BackupsTable
+from .workflows import CreateBackup
 
 
 LOG = logging.getLogger(__name__)
@@ -55,9 +56,21 @@ class IndexView(tables.DataTableView):
         # Gather all the instances for these backups
         instances = {}
         for backup in backups:
-            _id = backup['instance_id']
-            backup['instance'] = instances.get(_id)
-            if backup['instance'] is None:
+            LOG.error(dir(backup))
+            _id = backup.instanceRef
+            backup.instance = instances.get(_id)
+            if backup.instance is None:
                 instances[_id] = api.instance_get(self.request, _id)
-                backup['instance'] = instances.get(_id)
+                backup.instance = instances.get(_id)
         return backups
+
+
+class BackupView(workflows.WorkflowView):
+    workflow_class = CreateBackup
+    template_name = "dbaas/backup.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(BackupView, self).get_context_data(**kwargs)
+        context["instance_id"] = kwargs.get("instance_id")
+        self._instance = context['instance_id']
+        return context

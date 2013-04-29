@@ -31,20 +31,20 @@ from reddwarf_dashboard import api
 
 LOG = logging.getLogger(__name__)
 
-ACTIVE_STATES = ("ACTIVE",)
+ACTIVE_STATES = ("COMPLETED", "FAILED")
 
 
 class UpdateRow(tables.Row):
     ajax = True
 
-    def get_data(self, request, bakcup_id):
-        return api.backups_get(request, backup_id)
+    def get_data(self, request, backup_id):
+        return api.backup_get(request, backup_id)
 
 
 class BackupsTable(tables.DataTable):
     STATUS_CHOICES = (
-        ("active", True),
-        ("shutoff", True),
+        ("COMPLETED", True),
+        ("FAILED", True),
         ("suspended", True),
         ("paused", True),
         ("error", False),
@@ -54,7 +54,8 @@ class BackupsTable(tables.DataTable):
     )
     name = tables.Column("name",
                          verbose_name=_("Name"))
-    id = tables.Column("id", verbose_name=_("Backup ID"))
+    location = tables.Column("locationRef", verbose_name=_("Backup File"))
+    instance = tables.Column("instance", verbose_name=_("Database"))
     status = tables.Column("status",
                            filters=(title, replace_underscores),
                            verbose_name=_("Status"),
