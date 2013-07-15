@@ -203,4 +203,4 @@ LOGGING = {
 }
 
 INSTALLED_APPS = list(INSTALLED_APPS)
-INSTALLED_APPS += ['reddwarf_dashboard']
+INSTALLED_APPS += ['trove_dashboard']
