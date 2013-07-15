@@ -15,8 +15,8 @@
 import setuptools
 
 # TODO: don't require trove to exist first
-from trove.openstack.common import setup
-from trove.openstack.common.setup import write_git_changelog
+from openstack_dashboard.openstack.common import setup
+from openstack_dashboard.openstack.common.setup import write_git_changelog
 
 requires = setup.parse_requirements()
 depend_links = setup.parse_dependency_links()
