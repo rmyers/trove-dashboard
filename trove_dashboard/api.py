@@ -1,19 +1,19 @@
 """
-Simple Reddwarf API
+Simple Trove API
 ===================
 
-This is meant to be a simple wrapper around the Reddwarf API.
+This is meant to be a simple wrapper around the Trove API.
 
 """
 
 from django.conf import settings
 
-from reddwarfclient import client
-from reddwarfclient.auth import ServiceCatalog
+from troveclient import client
+from troveclient.auth import ServiceCatalog
 
 
 class TokenAuth(object):
-    """Simple Token Authentication handler for reddwarf api"""
+    """Simple Token Authentication handler for trove api"""
 
     def __init__(self, client, auth_strategy, auth_url, username, password, 
                  tenant, region, service_type, service_name, service_url):

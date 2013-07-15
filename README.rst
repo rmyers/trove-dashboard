@@ -1,12 +1,12 @@
-reddwarf-dashboard
+trove-dashboard
 ==================
 
-Horizon dashboard for the reddwarf project.
+Horizon dashboard for the trove project.
 
 Quickstart
 ----------
 
-#. Install reddwarf per: https://wiki.openstack.org/wiki/Reddwarf-installation
+#. Install trove per: https://wiki.openstack.org/wiki/Trove-installation
 #. Clone this repo to your machine.
 #. Run ``python setup.py develop``
 #. Edit/Copy ``local.example`` to ``/opt/stack/horizon/openstack_dashboard/local/local_settings.py``

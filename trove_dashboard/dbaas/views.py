@@ -31,7 +31,7 @@ from horizon import tabs
 from horizon import tables
 from horizon import workflows
 
-from reddwarf_dashboard import api
+from trove_dashboard import api
 from .tabs import InstanceDetailTabs
 from .tables import InstancesTable
 from .workflows import LaunchInstance

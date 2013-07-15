@@ -28,7 +28,7 @@ from openstack_dashboard.api import cinder
 from openstack_dashboard.api import glance
 from openstack_dashboard.usage import quotas
 
-from reddwarf_dashboard import api as rd_api
+from trove_dashboard import api as rd_api
 
 LOG = logging.getLogger(__name__)
 

@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import tabs
 
-from reddwarf_dashboard import api
+from trove_dashboard import api
 
 
 class OverviewTab(tabs.Tab):

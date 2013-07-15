@@ -24,7 +24,7 @@ from horizon import tables
 from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
 
-from reddwarf_dashboard import api
+from trove_dashboard import api
 
 
 LOG = logging.getLogger(__name__)

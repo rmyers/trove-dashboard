@@ -28,7 +28,7 @@ from horizon import tabs
 from horizon import tables
 from horizon import workflows
 
-from reddwarf_dashboard import api
+from trove_dashboard import api
 from .tables import BackupsTable
 from .workflows import CreateBackup
 

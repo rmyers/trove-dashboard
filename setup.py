@@ -14,21 +14,21 @@
 
 import setuptools
 
-# TODO: don't require reddwarf to exist first
-from reddwarf.openstack.common import setup
-from reddwarf.openstack.common.setup import write_git_changelog
+# TODO: don't require trove to exist first
+from openstack_dashboard.openstack.common import setup
+from openstack_dashboard.openstack.common.setup import write_git_changelog
 
 requires = setup.parse_requirements()
 depend_links = setup.parse_dependency_links()
 
 
-setuptools.setup(name='reddwarf-dashboard',
+setuptools.setup(name='trove-dashboard',
     version='0.0.1',
-    description='Reddwarf Dashboard for Horizon',
+    description='Trove Dashboard for Horizon',
     long_description=open('README.rst').read(),
     author='OpenStack',
     author_email='openstack@lists.launchpad.net',
-    url='https://github.com/rmyers/reddwarf-dashboard',
+    url='https://github.com/rmyers/trove-dashboard',
     cmdclass=setup.get_cmdclass(),
     packages=setuptools.find_packages(),
     include_package_data=True,
