@@ -39,10 +39,11 @@ class LogTab(tabs.Tab):
 
     def get_context_data(self, request):
         instance = self.tab_group.kwargs['instance']
+        tail = request.GET.get('length', None)
         try:
             data = api.nova.server_console_output(request,
                                                   instance.id,
-                                                  tail_length=35)
+                                                  tail)
         except:
             data = _('Unable to get log for instance "%s".') % instance.id
             exceptions.handle(request, ignore=True)
