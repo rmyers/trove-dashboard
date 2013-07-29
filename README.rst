@@ -1,12 +1,12 @@
 trove-dashboard
 ==================
 
-Horizon dashboard for the trove project.
+Horizon dashboard for the Trove project.
 
 Quickstart
 ----------
 
-#. Install trove per: https://wiki.openstack.org/wiki/Trove-installation
+#. Install trove per: https://wiki.openstack.org/wiki/Trove/installation
 #. Clone this repo to your machine.
 #. Run ``python setup.py develop``
 #. Edit/Copy ``local.example`` to ``/opt/stack/horizon/openstack_dashboard/local/local_settings.py``
