@@ -1,3 +1,4 @@
+import logging
 import os
 
 from django.utils.translation import ugettext_lazy as _
@@ -7,6 +8,8 @@ from openstack_dashboard.settings import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+REDDWARF_API_LOGLEVEL = logging.INFO
 
 # Set SSL proxy settings:
 # For Django 1.4+ pass this header from the proxy after terminating the SSL,

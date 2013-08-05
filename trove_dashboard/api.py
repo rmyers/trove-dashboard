@@ -5,11 +5,17 @@ Simple Trove API
 This is meant to be a simple wrapper around the Trove API.
 
 """
+import logging
+import os
 
 from django.conf import settings
 
 from troveclient import client
 from troveclient.auth import ServiceCatalog
+
+LOG = logging.getLogger(__name__)
+# Override the client log level to cut down on messages
+client._logger.setLevel(settings.REDDWARF_API_LOGLEVEL)
 
 
 class TokenAuth(object):
@@ -54,6 +60,7 @@ def instance_delete(request, instance_id):
 def instance_create(request, name, volume, flavor, databases=None, users=None,
                     restore_point=None):
     vol = {'size': volume}
+    LOG.error(restore_point)
     return rdclient(request).instances.create(name, flavor, vol,
                                               databases=databases,
                                               users=users,

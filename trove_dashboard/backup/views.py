@@ -57,7 +57,7 @@ class IndexView(tables.DataTableView):
         instances = {}
         for backup in backups:
             LOG.error(dir(backup))
-            _id = backup.instanceRef
+            _id = backup.instance_id
             backup.instance = instances.get(_id)
             if backup.instance is None:
                 instances[_id] = api.instance_get(self.request, _id)

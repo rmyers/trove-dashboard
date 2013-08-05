@@ -182,7 +182,7 @@ class LaunchInstance(workflows.Workflow):
     def _get_backup(self, context):
         backup = None
         if context['backup']:
-            backup = {'backupId': context['backup']}
+            backup = {'backupRef': context['backup']}
         return backup
 
     def handle(self, request, context):
