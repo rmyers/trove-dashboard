@@ -142,7 +142,7 @@ class RestoreAction(workflows.Action):
                 self.cleaned_data['backup'] = bkup.id
             except:
                 raise forms.ValidationError(_("Unable to find backup!"))
-        return self.cleaned_data
+        return backup
 
 
 class RestoreBackup(workflows.Step):
