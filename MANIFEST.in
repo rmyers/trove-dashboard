@@ -1,0 +1,1 @@
+recursive-include trove_dashboard *.html
