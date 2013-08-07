@@ -104,7 +104,7 @@ class BackupsTable(tables.DataTable):
     location = tables.Column("file", empty_value=_("Download"),
                              link=lambda obj: obj.locationRef,
                              verbose_name=_("Backup File"))
-    instance = tables.Column(lambda obj: obj.instance_id,
+    instance = tables.Column(lambda obj: obj.instance.name,
                              verbose_name=_("Database"))
     status = tables.Column("status",
                            filters=(title, replace_underscores),

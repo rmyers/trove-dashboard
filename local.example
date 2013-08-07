@@ -8,6 +8,9 @@ from openstack_dashboard.settings import *
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+
+REDDWARF_API_LOGLEVEL = logging.INFO
+
 # Set SSL proxy settings:
 # For Django 1.4+ pass this header from the proxy after terminating the SSL,
 # and don't forget to strip it from the client's request.

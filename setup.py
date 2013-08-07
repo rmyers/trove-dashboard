@@ -20,8 +20,8 @@ from trove_dashboard.tools import setup
 requires = setup.parse_requirements()
 depend_links = setup.parse_dependency_links()
 
-setuptools.setup(name='trove-dashboard-0.1',
-                 version='0.1',
+setuptools.setup(name='trove-dashboard',
+                 version='0.1.0',
                  description='Trove Dashboard for Horizon',
                  long_description=open('README.rst').read(),
                  author='OpenStack',
