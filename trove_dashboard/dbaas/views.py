@@ -48,8 +48,7 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        marker = self.request.GET.get(
-                        InstancesTable._meta.pagination_param, None)
+        marker = self.request.GET.get(InstancesTable._meta.pagination_param, None)
         # Gather our instances
         try:
             instances = api.instance_list(self.request, marker=marker)
@@ -59,7 +58,7 @@ class IndexView(tables.DataTableView):
             instances = []
             exceptions.handle(self.request,
                               _('Unable to retrieve instances.'))
-        # Gather our flavors and correlate our instances to them
+            # Gather our flavors and correlate our instances to them
         if instances:
             try:
                 flavors = api.flavor_list(self.request)
@@ -68,7 +67,7 @@ class IndexView(tables.DataTableView):
                 exceptions.handle(self.request, ignore=True)
 
             full_flavors = SortedDict([(str(flavor.id), flavor)
-                                        for flavor in flavors])
+                                       for flavor in flavors])
             # Loop through instances to get flavor info.
             for instance in instances:
                 try:
@@ -96,6 +95,7 @@ class LaunchInstanceView(workflows.WorkflowView):
         initial['user_id'] = self.request.user.id
         return initial
 
+
 class DetailView(tabs.TabView):
     tab_group_class = InstanceDetailTabs
     template_name = 'dbaas/detail.html'
@@ -119,7 +119,7 @@ class DetailView(tabs.TabView):
                 exceptions.handle(self.request,
                                   _('Unable to retrieve details for '
                                     'instance "%s".') % instance_id,
-                                    redirect=redirect)
+                                  redirect=redirect)
             self._instance = instance
         return self._instance
 

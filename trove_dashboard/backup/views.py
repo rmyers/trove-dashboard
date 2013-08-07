@@ -46,23 +46,22 @@ class IndexView(tables.DataTableView):
     def get_data(self):
         marker = self.request.GET.get(BackupsTable._meta.pagination_param)
         try:
-            backups = api.backup_list(self.request, marker=marker)
+            real_backups = api.backup_list(self.request, marker=marker)
             self._more = False
+            instances = {}
+            for backup in real_backups:
+                LOG.error(dir(backup))
+                instance_id = backup.instance_id
+                instances[instance_id] = api.instance_get(self.request, instance_id)
+                backup.instance_id = (instances.get(instance_id)).name
+            return real_backups
         except:
             self._more = False
             backups = []
             exceptions.handle(self.request,
                               _('Unable to retrieve backups.'))
         # Gather all the instances for these backups
-        instances = {}
-        for backup in backups:
-            LOG.error(dir(backup))
-            _id = backup.instance_id
-            backup.instance = instances.get(_id)
-            if backup.instance is None:
-                instances[_id] = api.instance_get(self.request, _id)
-                backup.instance = instances.get(_id)
-        return backups
+
 
 
 class BackupView(workflows.WorkflowView):
