@@ -13,6 +13,8 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from collections import defaultdict
+
 #import json
 import simplejson as json
 import logging
@@ -30,7 +32,6 @@ from trove_dashboard import api as rd_api
 
 LOG = logging.getLogger(__name__)
 
-
 class SetInstanceDetailsAction(workflows.Action):
     name = forms.CharField(max_length=80, label=_("Database Name"))
     service_type = forms.ChoiceField(label=_("Service Type"),
@@ -44,7 +45,8 @@ class SetInstanceDetailsAction(workflows.Action):
 
     class Meta:
         name = _("Details")
-        help_text_template = ("dbaas/_launch_details_help.html")
+        #help_text_template = ("dbaas/_launch_details_help.html")
+        help_text_template = ("project/instances/_launch_details_help.html")
 
     def populate_service_type_choices(self, request, context):
         # TODO: make an api call for this!
@@ -64,7 +66,7 @@ class SetInstanceDetailsAction(workflows.Action):
     def get_help_text(self):
         extra = {}
         try:
-            extra['usages'] = quotas.tenant_quota_usages(self.request).__dict__
+            extra['usages'] = api.nova.tenant_absolute_limits(self.request)
             extra['usages_json'] = json.dumps(extra['usages'])
             flavors = json.dumps([f._info for f in
                                   api.nova.flavor_list(self.request)])

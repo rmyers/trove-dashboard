@@ -5,7 +5,7 @@ import horizon
 class TrovePanels(horizon.PanelGroup):
     slug = "database"
     name = _("Manage Databases")
-    panels = ['databases', 'backup', ]
+    panels = ['dbaas', 'backup']
 
 
 class Dbaas(horizon.Dashboard):
