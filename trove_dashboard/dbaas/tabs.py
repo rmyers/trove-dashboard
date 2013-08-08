@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import tabs
 
-from trove_dashboard import api
+from openstack_dashboard import api
 
 
 class OverviewTab(tabs.Tab):
@@ -39,10 +39,11 @@ class LogTab(tabs.Tab):
 
     def get_context_data(self, request):
         instance = self.tab_group.kwargs['instance']
+        tail = request.GET.get('length', None)
         try:
             data = api.nova.server_console_output(request,
                                                   instance.id,
-                                                  tail_length=35)
+                                                  tail)
         except:
             data = _('Unable to get log for instance "%s".') % instance.id
             exceptions.handle(request, ignore=True)

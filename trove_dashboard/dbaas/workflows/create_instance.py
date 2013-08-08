@@ -84,15 +84,15 @@ class SetInstanceDetails(workflows.Step):
 
 class AddDatabasesAction(workflows.Action):
     databases = forms.CharField(label=_('Initial Database'),
-                                required=False,
+                                required=True,
                                 help_text=_('Comma separated list of '
                                             'databases to create'))
     user = forms.CharField(label=_('Initial Admin User'),
-                           required=False,
+                           required=True,
                            help_text=_("Initial admin user to add"))
     password = forms.CharField(widget=forms.PasswordInput(),
                                label=_("Password"),
-                               required=False)
+                               required=True)
     host = forms.CharField(label=_("Host (optional)"),
                            required=False,
                            help_text=_("Host or IP that the user is allowed "
