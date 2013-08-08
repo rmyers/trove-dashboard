@@ -2,7 +2,6 @@ from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
-
 class TrovePanels(horizon.PanelGroup):
     slug = "database"
     name = _("Manage Databases")

@@ -13,25 +13,24 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from collections import defaultdict
 
-import json
+#import json
+import simplejson as json
 import logging
 
 from django.utils.translation import ugettext_lazy as _
-
 from horizon import exceptions
 from horizon import forms
 from horizon import workflows
 
 from openstack_dashboard import api
-from openstack_dashboard.api import cinder
-from openstack_dashboard.api import glance
 from openstack_dashboard.usage import quotas
 
 from trove_dashboard import api as rd_api
 
-LOG = logging.getLogger(__name__)
 
+LOG = logging.getLogger(__name__)
 
 class SetInstanceDetailsAction(workflows.Action):
     name = forms.CharField(max_length=80, label=_("Database Name"))
@@ -40,13 +39,14 @@ class SetInstanceDetailsAction(workflows.Action):
     flavor = forms.ChoiceField(label=_("Flavor"),
                                help_text=_("Size of image to launch."))
     volume = forms.IntegerField(label=_("Volume Size"),
-                               min_value=1,
-                               initial=1,
-                               help_text=_("Size of the volume in GB."))
+                                min_value=1,
+                                initial=1,
+                                help_text=_("Size of the volume in GB."))
 
     class Meta:
         name = _("Details")
-        help_text_template = ("dbaas/_launch_details_help.html")
+        #help_text_template = ("dbaas/_launch_details_help.html")
+        help_text_template = ("project/instances/_launch_details_help.html")
 
     def populate_service_type_choices(self, request, context):
         # TODO: make an api call for this!
@@ -66,20 +66,20 @@ class SetInstanceDetailsAction(workflows.Action):
     def get_help_text(self):
         extra = {}
         try:
-            extra['usages'] = quotas.tenant_quota_usages(self.request)
+            extra['usages'] = api.nova.tenant_absolute_limits(self.request)
             extra['usages_json'] = json.dumps(extra['usages'])
             flavors = json.dumps([f._info for f in
                                   api.nova.flavor_list(self.request)])
             extra['flavors'] = flavors
         except:
             exceptions.handle(self.request,
-                              _("Unable to retrieve quota information."))
+                                  _("Unable to retrieve quota information."))
         return super(SetInstanceDetailsAction, self).get_help_text(extra)
 
 
 class SetInstanceDetails(workflows.Step):
     action_class = SetInstanceDetailsAction
-    contributes = ("name", "volume", "flavor", "service_type")
+    contributes = ("name", "service_type", "volume", "flavor")
 
 
 class AddDatabasesAction(workflows.Action):
@@ -108,6 +108,7 @@ class AddDatabasesAction(workflows.Action):
             msg = _('You must specify a password if you create a user.')
             self._errors["password"] = self.error_class([msg])
         return cleaned_data
+
 
 class InitializeDatabase(workflows.Step):
     action_class = AddDatabasesAction
@@ -194,7 +195,6 @@ class LaunchInstance(workflows.Workflow):
                                    databases=self._get_databases(context),
                                    users=self._get_users(context),
                                    restore_point=self._get_backup(context))
-            # TODO (rmyers): restore_point
             return True
         except:
             exceptions.handle(request)
