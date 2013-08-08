@@ -12,7 +12,7 @@ from troveclient.auth import ServiceCatalog
 
 
 LOG = logging.getLogger(__name__)
-client._logger.setLevel(settings.REDDWARF_API_LOGLEVEL)
+client._logger.setLevel(settings.TROVE_LOGLEVEL)
 
 
 class TokenAuth(object):
