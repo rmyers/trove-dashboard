@@ -1,7 +1,7 @@
 trove-dashboard
 ==================
 
-Horizon dashboard for the trove project.
+Horizon dashboard for the Trove project.
 
 Quickstart
 ----------
