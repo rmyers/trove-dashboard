@@ -6,7 +6,7 @@ Horizon dashboard for the trove project.
 Quickstart
 ----------
 
-#. Install trove per: https://wiki.openstack.org/wiki/Trove-installation
+#. Install trove per: https://wiki.openstack.org/wiki/Trove/installation
 #. Clone this repo to your machine.
 #. Run ``python setup.py develop``
 #. Run ``python setup.py sdist``
