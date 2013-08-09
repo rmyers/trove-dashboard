@@ -9,10 +9,12 @@ import logging
 from django.conf import settings
 from troveclient import client
 from troveclient.auth import ServiceCatalog
+from trove_dashboard.tools.horizon_attrs import get_horizon_parameter
 
 
 LOG = logging.getLogger(__name__)
-client._logger.setLevel(settings.TROVE_LOGLEVEL)
+
+client._logger.setLevel(get_horizon_parameter('TROVE_LOGLEVEL', True))
 
 
 class TokenAuth(object):
