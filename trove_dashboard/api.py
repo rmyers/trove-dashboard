@@ -8,6 +8,7 @@ This is meant to be a simple wrapper around the Trove API.
 import logging
 from django.conf import settings
 from troveclient import client
+from troveclient.exceptions import ClientException
 from troveclient.auth import ServiceCatalog
 from trove_dashboard.tools.horizon_attrs import get_horizon_parameter
 
