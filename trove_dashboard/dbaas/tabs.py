@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import tabs
 
-from openstack_dashboard import api
+from trove_dashboard import api
 
 
 class OverviewTab(tabs.Tab):
@@ -31,27 +31,26 @@ class OverviewTab(tabs.Tab):
         return {"instance": self.tab_group.kwargs['instance']}
 
 
-class LogTab(tabs.Tab):
-    name = _("Log")
-    slug = "log"
-    template_name = "dbaas/_detail_log.html"
+class UserTab(tabs.Tab):
+    name = _("Users")
+    slug = "users"
+    template_name = "dbaas/_detail_users.html"
     preload = False
 
     def get_context_data(self, request):
         instance = self.tab_group.kwargs['instance']
-        tail = request.GET.get('length', None)
         try:
-            data = api.nova.server_console_output(request,
-                                                  instance.id,
-                                                  tail)
+            data = api.users_list(request, instance.id)
+            for x in data:
+                print dir(x)
         except:
-            data = _('Unable to get log for instance "%s".') % instance.id
+            data = _('Unable to get users for instance "%s".') % instance.id
             exceptions.handle(request, ignore=True)
         return {"instance": instance,
-                "console_log": data}
+                "users": data}
 
 
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instance_details"
-    tabs = (OverviewTab, LogTab)
+    tabs = (OverviewTab, UserTab)
     sticky = True

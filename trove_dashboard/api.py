@@ -88,3 +88,6 @@ def flavor_list(request):
 
 def flavor_get(request, flavor_id):
     return rdclient(request).flavors.get(flavor_id)
+
+def users_list(request, instance_id):
+    return rdclient(request).users.list(instance_id)
