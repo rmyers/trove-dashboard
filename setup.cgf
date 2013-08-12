@@ -1,0 +1,26 @@
+[metadata]
+name = trove-dashboard
+author = OpenStack Foundation
+author-email = openstack-dev@lists.openstack.org
+summary = OpenStack's setup automation in a reuable form
+description-file = README.rst
+license = Apache-2
+classifier =
+    Development Status :: 4 - Beta
+        Environment :: OpenStack
+        Intended Audience :: Developers
+        Intended Audience :: Information Technology
+        License :: OSI Approved :: Apache Software License
+        Operating System :: OS Independent
+        Programming Language :: Python
+
+[files]
+packages = trove_dashboard
+data_files=
+            trove_dashboard/templates = trove_dashboard/templates/*
+
+[global]
+setup-hooks = pbr.hooks.setup_hook
+
+[build_sphinx]
+all_files = 1
