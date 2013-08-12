@@ -77,6 +77,10 @@ def database_list(request, instance_id):
     return rdclient(request).databases.list(instance_id)
 
 
+def database_delete(request, instance_id, db_name):
+    return rdclient(request).databases.delete(instance_id, db_name)
+
+
 def backup_list(request, limit=None, marker=None):
     return rdclient(request).backups.list()
 
@@ -103,3 +107,11 @@ def flavor_get(request, flavor_id):
 
 def users_list(request, instance_id):
     return rdclient(request).users.list(instance_id)
+
+
+def user_delete(request, instance_id, user):
+    return rdclient(request).users.delete(instance_id, user)
+
+
+def user_list_access(request, instance_id, user):
+    return rdclient(request).users.list_access(instance_id, user)

@@ -20,6 +20,8 @@ from horizon import exceptions
 from horizon import tabs
 
 from trove_dashboard import api
+from .tables import UsersTable
+from .tables import DatabaseTable
 
 
 class OverviewTab(tabs.Tab):
@@ -31,26 +33,46 @@ class OverviewTab(tabs.Tab):
         return {"instance": self.tab_group.kwargs['instance']}
 
 
-class UserTab(tabs.Tab):
+class UserTab(tabs.TableTab):
+    table_classes = [UsersTable]
     name = _("Users")
-    slug = "users"
-    template_name = "dbaas/_detail_users.html"
+    slug = "users_tab"
+    instance = None
+    template_name = "horizon/common/_detail_table.html"
     preload = False
 
-    def get_context_data(self, request):
+    def get_users_data(self):
         instance = self.tab_group.kwargs['instance']
         try:
-            data = api.users_list(request, instance.id)
-            for x in data:
-                print dir(x)
+            data = api.users_list(self.request, instance.id)
+            for user in data:
+                user.instance = instance
+                user.access = api.user_list_access(self.request, instance.id, user.name)
         except:
-            data = _('Unable to get users for instance "%s".') % instance.id
-            exceptions.handle(request, ignore=True)
-        return {"instance": instance,
-                "users": data}
+            data = []
+        return data
+
+
+class DatabaseTab(tabs.TableTab):
+    table_classes = [DatabaseTable]
+    name = _("Databases")
+    slug = "database_tab"
+    instance = None
+    template_name = "horizon/common/_detail_table.html"
+    preload = False
+
+    def get_databases_data(self):
+        instance = self.tab_group.kwargs['instance']
+        try:
+            data = api.database_list(self.request, instance.id)
+            add_instance = lambda d: setattr(d, 'instance', instance)
+            map(add_instance, data)
+        except:
+            data = []
+        return data
 
 
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instance_details"
-    tabs = (OverviewTab, UserTab)
+    tabs = (OverviewTab, UserTab, DatabaseTab)
     sticky = True

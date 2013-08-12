@@ -84,15 +84,15 @@ class SetInstanceDetails(workflows.Step):
 
 class AddDatabasesAction(workflows.Action):
     databases = forms.CharField(label=_('Initial Database'),
-                                required=True,
+                                required=False,
                                 help_text=_('Comma separated list of '
                                             'databases to create'))
     user = forms.CharField(label=_('Initial Admin User'),
-                           required=True,
+                           required=False,
                            help_text=_("Initial admin user to add"))
     password = forms.CharField(widget=forms.PasswordInput(),
                                label=_("Password"),
-                               required=True)
+                               required=False)
     host = forms.CharField(label=_("Host (optional)"),
                            required=False,
                            help_text=_("Host or IP that the user is allowed "
@@ -104,9 +104,13 @@ class AddDatabasesAction(workflows.Action):
 
     def clean(self):
         cleaned_data = super(AddDatabasesAction, self).clean()
-        if cleaned_data.get('user') and not cleaned_data.get('password'):
-            msg = _('You must specify a password if you create a user.')
-            self._errors["password"] = self.error_class([msg])
+        if cleaned_data.get('user'):
+            if not cleaned_data.get('password'):
+                msg = _('You must specify a password if you create a user.')
+                self._errors["password"] = self.error_class([msg])
+            if not cleaned_data.get('databases'):
+                msg = _('You must specify at least one database if you create a user.')
+                self._errors["databases"] = self.error_class([msg])
         return cleaned_data
 
 
@@ -174,7 +178,11 @@ class LaunchInstance(workflows.Workflow):
     def _get_users(self, context):
         users = None
         if context['user']:
-            user = {'name': context['user'], 'password': context['password']}
+            user = {
+                'name': context['user'],
+                'password': context['password'],
+                'databases': self._get_databases(context)
+            }
             if context['host']:
                 user['host'] = context['host']
             users = [user]

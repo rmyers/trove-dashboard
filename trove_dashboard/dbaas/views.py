@@ -19,14 +19,11 @@ Views for managing instances.
 """
 import logging
 
-from django import http
-from django import shortcuts
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
-from horizon import forms
 from horizon import tabs
 from horizon import tables
 from horizon import workflows
@@ -34,6 +31,8 @@ from horizon import workflows
 from trove_dashboard import api
 from .tabs import InstanceDetailTabs
 from .tables import InstancesTable
+from .tables import DatabaseTable
+from .tables import UsersTable
 from .workflows import LaunchInstance
 
 
@@ -96,9 +95,10 @@ class LaunchInstanceView(workflows.WorkflowView):
         return initial
 
 
-class DetailView(tabs.TabView):
+class DetailView(tabs.TabbedTableView):
     tab_group_class = InstanceDetailTabs
     template_name = 'dbaas/detail.html'
+
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
@@ -118,11 +118,6 @@ class DetailView(tabs.TabView):
                                   _('Unable to retrieve details for '
                                     'instance "%s".') % instance_id,
                                   redirect=redirect)
-            try:
-                instance.databases = api.database_list(self.request,
-                                                       instance_id)
-            except api.ClientException:
-                pass
 
             self._instance = instance
         return self._instance

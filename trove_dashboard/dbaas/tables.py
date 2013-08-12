@@ -17,8 +17,9 @@
 import logging
 
 from django.core import urlresolvers
-from django.template.defaultfilters import title
-from django.utils.translation import string_concat, ugettext_lazy as _
+from django.core.urlresolvers import reverse
+from django.template.defaultfilters import title, join
+from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
 from horizon.templatetags import sizeformat
@@ -79,6 +80,30 @@ class RestartInstance(tables.BatchAction):
 
     def action(self, request, obj_id):
         api.instance_restart(request, obj_id)
+
+
+class DeleteUser(tables.DeleteAction):
+    name = "delete"
+    action_present = _("Delete")
+    action_past = _("Deleted")
+    data_type_singular = _("User")
+    data_type_plural = _("Users")
+
+    def delete(self, request, obj_id):
+        datum = self.table.get_object_by_id(obj_id)
+        api.users_delete(request, datum.instance.id, datum.name)
+
+
+class DeleteDatabase(tables.DeleteAction):
+    name = "delete"
+    action_present = _("Delete")
+    action_past = _("Deleted")
+    data_type_singular = _("Database")
+    data_type_plural = _("Databases")
+
+    def delete(self, request, obj_id):
+        datum = self.table.get_object_by_id(obj_id)
+        api.database_delete(request, datum.instance.id, datum.name)
 
 
 class LaunchLink(tables.LinkAction):
@@ -166,3 +191,31 @@ class InstancesTable(tables.DataTable):
         table_actions = (LaunchLink, TerminateInstance)
         row_actions = (CreateBackup,
                        RestartInstance, TerminateInstance)
+
+
+class UsersTable(tables.DataTable):
+    name = tables.Column("name", verbose_name=_("User Name"))
+    host = tables.Column("host", verbose_name=_("Allowed Hosts"))
+    databases = tables.Column("databases", verbose_name=_("Databases"))
+
+    class Meta:
+        name = "users"
+        verbose_name = _("Database Instance Users")
+        table_actions = [DeleteUser]
+        row_actions = [DeleteUser]
+
+    def get_object_id(self, datum):
+        return datum.name
+
+
+class DatabaseTable(tables.DataTable):
+    name = tables.Column("name", verbose_name=_("Database Name"))
+
+    class Meta:
+        name = "databases"
+        verbose_name = _("Databases")
+        table_actions = [DeleteDatabase]
+        row_actions = [DeleteDatabase]
+
+    def get_object_id(self, datum):
+        return datum.name
