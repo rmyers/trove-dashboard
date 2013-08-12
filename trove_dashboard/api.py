@@ -15,7 +15,7 @@ from trove_dashboard.tools.horizon_attrs import get_horizon_parameter
 
 LOG = logging.getLogger(__name__)
 
-client._logger.setLevel(get_horizon_parameter('TROVE_LOGLEVEL', True))
+client._logger.setLevel(get_horizon_parameter('TROVE_LOGLEVEL', logging.CRITICAL))
 
 
 class TokenAuth(object):
