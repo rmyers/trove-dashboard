@@ -12,38 +12,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import setuptools
+from setuptools import setup
 
-# TODO: don't require trove to exist first
-from trove_dashboard.tools import setup
 
-requires = setup.parse_requirements()
-depend_links = setup.parse_dependency_links()
-
-setuptools.setup(name='trove-dashboard-0.1',
-                 version='0.1',
-                 description='Trove Dashboard for Horizon',
-                 long_description=open('README.rst').read(),
-                 author='OpenStack',
-                 author_email='openstack@lists.launchpad.net',
-                 url='https://github.com/rmyers/trove-dashboard',
-                 cmdclass=setup.get_cmdclass(),
-                 packages=setuptools.find_packages(),
-                 include_package_data=True,
-                 install_requires=requires,
-                 dependency_links=depend_links,
-                 setup_requires=['setuptools-git>=0.4'],
-                 test_suite='nose.collector',
-                 classifiers=[
-                     'Development Status :: 4 - Beta',
-                     'License :: OSI Approved :: Apache Software License',
-                     'Framework :: Django',
-                     'Intended Audience :: Developers',
-                     'Operating System :: OS Independent',
-                     'Programming Language :: Python',
-                     'Topic :: Internet :: WWW/HTTP',
-                     'Environment :: OpenStack',
-                 ],
-                 package_data={'trove_dashboard': ['*.html', ]
-                 },
+setup(
+    setup_requires=['pbr'],
+    pbr=True,
 )
