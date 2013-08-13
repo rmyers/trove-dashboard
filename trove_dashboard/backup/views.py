@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import tables
 from horizon import workflows
+from horizon.views import APIView
 
 from trove_dashboard import api
 from .tables import BackupsTable
@@ -41,24 +42,33 @@ class IndexView(tables.DataTableView):
     def has_more_data(self, table):
         return self._more
 
+    def _get_extra_data(self, backup):
+        """Apply extra info to the backup."""
+        instance_id = backup.instance_id
+        if not hasattr(self, '_instances'):
+            self._instances = {}
+        instance = self._instances.get(instance_id)
+        if instance is None:
+            try:
+                instance = api.instance_get(self.request, instance_id)
+            except:
+                instance = _('Not Found')
+        backup.instance = instance
+        return backup
+
     def get_data(self):
         marker = self.request.GET.get(BackupsTable._meta.pagination_param)
         try:
-            real_backups = api.backup_list(self.request, marker=marker)
+            backups = api.backup_list(self.request, marker=marker)
+            backups = map(self._get_extra_data, backups)
+            # TODO: (rmyers) Pagination is broken in trove api.
             self._more = False
-            instances = {}
-            for backup in real_backups:
-                LOG.error(dir(backup))
-                instance_id = backup.instance_id
-                instances[instance_id] = api.instance_get(self.request, instance_id)
-                backup.instance_id = (instances.get(instance_id)).name
-            return real_backups
         except:
             self._more = False
             backups = []
             exceptions.handle(self.request,
                               _('Unable to retrieve backups.'))
-        # Gather all the instances for these backups
+        return backups
 
 
 
@@ -70,4 +80,31 @@ class BackupView(workflows.WorkflowView):
         context = super(BackupView, self).get_context_data(**kwargs)
         context["instance_id"] = kwargs.get("instance_id")
         self._instance = context['instance_id']
+        return context
+
+
+def parse_date(date_string):
+    import datetime
+    return datetime.datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S')
+
+
+class DetailView(APIView):
+    template_name = "dbaas/backup_details.html"
+
+    def get_data(self, request, context, *args, **kwargs):
+        backup_id = kwargs.get("backup_id")
+        try:
+            backup = api.backup_get(request, backup_id)
+            backup.created_at = parse_date(backup.created)
+            backup.updated_at = parse_date(backup.updated)
+            backup.duration = backup.updated_at - backup.created_at
+        except:
+            exceptions.handle(request,
+                              _('Unable to retrieve backup.'))
+        try:
+            instance = api.instance_get(request, backup.instance_id)
+        except:
+            instance = None
+        context['backup'] = backup
+        context['instance'] = instance
         return context
