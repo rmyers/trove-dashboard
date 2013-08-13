@@ -24,6 +24,7 @@ from trove_dashboard import dashboard
 class Databases(horizon.Panel):
     name = _("Database Instances")
     slug = 'databases'
+    permissions = ('openstack.services.database',)
 
 
 dashboard.Dbaas.register(Databases)
