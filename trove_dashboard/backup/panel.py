@@ -24,7 +24,8 @@ from trove_dashboard import dashboard
 class Backups(horizon.Panel):
     name = _("Backups")
     slug = 'backups'
-    permissions = ('openstack.services.database',)
+    permissions = ('openstack.services.database',
+                   'openstack.services.object-store',)
 
 
 dashboard.Dbaas.register(Backups)
