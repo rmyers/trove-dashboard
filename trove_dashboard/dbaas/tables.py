@@ -26,6 +26,9 @@ from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
 
 from trove_dashboard import api
+from ..backup.tables import LaunchLink as LaunchBackup
+from ..backup.tables import DeleteBackup
+from ..backup.tables import RestoreLink
 
 
 LOG = logging.getLogger(__name__)
@@ -219,3 +222,38 @@ class DatabaseTable(tables.DataTable):
 
     def get_object_id(self, datum):
         return datum.name
+
+
+class InstanceBackupsTable(tables.DataTable):
+    STATUS_CHOICES = (
+        ("COMPLETED", True),
+        ("FAILED", True),
+        ("NEW", False),
+        ("paused", True),
+        ("error", False),
+    )
+    STATUS_DISPLAY_CHOICES = (
+        ('foo', 'Bar'),
+    )
+    name = tables.Column("name",
+                         link=("horizon:database:backups:detail"),
+                         verbose_name=_("Name"))
+    created = tables.Column("created", verbose_name=_("Created At"),
+                            filters=None)
+    location = tables.Column(lambda obj: _("Download"),
+                             link=lambda obj: obj.locationRef,
+                             verbose_name=_("Backup File"))
+    status = tables.Column("status",
+                           filters=(title, replace_underscores),
+                           verbose_name=_("Status"),
+                           status=True,
+                           status_choices=STATUS_CHOICES,
+                           display_choices=STATUS_DISPLAY_CHOICES)
+
+    class Meta:
+        name = "backups"
+        verbose_name = _("Backups")
+        status_columns = ["status"]
+        row_class = UpdateRow
+        table_actions = (LaunchBackup, DeleteBackup)
+        row_actions = (RestoreLink, DeleteBackup)

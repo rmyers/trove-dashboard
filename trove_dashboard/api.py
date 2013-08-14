@@ -69,6 +69,10 @@ def instance_create(request, name, volume, flavor, databases=None, users=None,
                                               restorePoint=restore_point)
 
 
+def instance_backups(request, instance_id):
+    return rdclient(request).instances.backups(instance_id)
+
+
 def instance_restart(request, instance_id):
     return rdclient(request).instances.restart(instance_id)
 

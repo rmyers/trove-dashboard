@@ -17,6 +17,7 @@
 import logging
 
 from django.template.defaultfilters import title
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from horizon.conf import HORIZON_CONFIG
@@ -85,11 +86,26 @@ class UpdateRow(tables.Row):
         return backup
 
 
+def db_link(obj):
+    if not hasattr(obj, 'instance'):
+        return
+    if hasattr(obj.instance, 'name'):
+        return reverse(
+            'horizon:database:databases:detail', 
+            kwargs={'instance_id': obj.instance_id})
+
+
+def db_name(obj):
+    if hasattr(obj.instance, 'name'):
+        return obj.instance.name
+    return obj.instance_id
+
+
 class BackupsTable(tables.DataTable):
     STATUS_CHOICES = (
         ("COMPLETED", True),
         ("FAILED", True),
-        ("suspended", True),
+        ("NEW", False),
         ("paused", True),
         ("error", False),
     )
@@ -101,10 +117,10 @@ class BackupsTable(tables.DataTable):
                          verbose_name=_("Name"))
     created = tables.Column("created", verbose_name=_("Created At"),
                             filters=[date])
-    location = tables.Column("file", empty_value=_("Download"),
+    location = tables.Column(lambda obj: _("Download"),
                              link=lambda obj: obj.locationRef,
                              verbose_name=_("Backup File"))
-    instance = tables.Column(lambda obj: obj.instance_id,
+    instance = tables.Column(db_name, link=db_link,
                              verbose_name=_("Database"))
     status = tables.Column("status",
                            filters=(title, replace_underscores),

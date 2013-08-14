@@ -22,6 +22,7 @@ from horizon import tabs
 from trove_dashboard import api
 from .tables import UsersTable
 from .tables import DatabaseTable
+from .tables import InstanceBackupsTable
 
 
 class OverviewTab(tabs.Tab):
@@ -72,7 +73,24 @@ class DatabaseTab(tabs.TableTab):
         return data
 
 
+class BackupsTab(tabs.TableTab):
+    table_classes = [InstanceBackupsTable]
+    name = _("Backups")
+    slug = "backups_tab"
+    instance = None
+    template_name = "horizon/common/_detail_table.html"
+    preload = False
+
+    def get_backups_data(self):
+        instance = self.tab_group.kwargs['instance']
+        try:
+            data = api.instance_backups(self.request, instance.id)
+        except:
+            data = []
+        return data
+
+
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instance_details"
-    tabs = (OverviewTab, UserTab, DatabaseTab)
+    tabs = (OverviewTab, UserTab, DatabaseTab, BackupsTab)
     sticky = True
