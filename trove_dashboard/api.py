@@ -1,20 +1,17 @@
 """
 Simple Trove API
 ===================
-
 This is meant to be a simple wrapper around the Trove API.
-
 """
 import logging
 from troveclient import client
 from troveclient.auth import ServiceCatalog
-from trove_dashboard.utils import configuration_reader
 from trove_dashboard.utils.horizon_attrs import get_horizon_parameter
-
 
 LOG = logging.getLogger(__name__)
 
-client._logger.setLevel(get_horizon_parameter('TROVE_LOGLEVEL', logging.CRITICAL))
+client._logger.setLevel(
+    get_horizon_parameter('TROVE_LOGLEVEL', logging.CRITICAL))
 
 
 class TokenAuth(object):
@@ -22,7 +19,7 @@ class TokenAuth(object):
 
     def __init__(self, client, auth_strategy, auth_url, username, password,
                  tenant, region, service_type, service_name, service_url):
-        # TODO (rmyers): handle some of these other args 
+        # TODO (rmyers): handle some of these other args
         self.username = username
         self.service_type = service_type
         self.service_name = service_name
@@ -111,7 +108,6 @@ def flavor_get(request, flavor_id):
 
 def users_list(request, instance_id):
     return rdclient(request).users.list(instance_id)
-
 
 def user_delete(request, instance_id, user):
     return rdclient(request).users.delete(instance_id, user)

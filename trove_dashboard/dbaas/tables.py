@@ -132,6 +132,7 @@ class CreateBackup(tables.LinkAction):
         url = urlresolvers.reverse(self.url)
         return url + "?instance=%s" % datam.id
 
+
 class UpdateRow(tables.Row):
     ajax = True
 

@@ -26,5 +26,4 @@ class Databases(horizon.Panel):
     slug = 'databases'
     permissions = ('openstack.services.database',)
 
-
 dashboard.Dbaas.register(Databases)

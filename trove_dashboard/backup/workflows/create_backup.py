@@ -42,7 +42,10 @@ class BackupDetailsAction(workflows.Action):
 
     def populate_instance_choices(self, request, context):
         instances = api.instance_list(request, limit=100)
+        LOG.info(msg=_("Obtaining list of instances with limit 100 per page at %s class "
+                       % repr(BackupDetailsAction.__class__)))
         return [(i.id, i.name) for i in instances]
+
 
 class SetBackupDetails(workflows.Step):
     action_class = BackupDetailsAction
@@ -60,7 +63,7 @@ class CreateBackup(workflows.Workflow):
 
     def get_initial(self):
         initial = super(CreateBackup, self).get_initial()
-        initial['instance_id'] 
+        initial['instance_id']
 
     def format_status_message(self, message):
         name = self.context.get('name', 'unknown instance')
@@ -72,7 +75,10 @@ class CreateBackup(workflows.Workflow):
                               context['name'],
                               context['instance'],
                               context['description'])
+            LOG.info(msg=_("Creating backup at %s class" % repr(CreateBackup.__class__)))
             return True
         except:
+            LOG.critical(_("Exception while creating backup at %s class"
+                           % repr(CreateBackup.__class__)))
             exceptions.handle(request)
             return False

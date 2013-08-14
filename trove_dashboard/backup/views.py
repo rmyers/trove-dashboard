@@ -19,10 +19,8 @@ Views for displaying database backups.
 """
 import logging
 
-from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 
-from horizon import exceptions
 from horizon import tables
 from horizon import workflows
 from horizon.views import APIView
@@ -30,7 +28,8 @@ from horizon.views import APIView
 from trove_dashboard import api
 from .tables import BackupsTable
 from .workflows import CreateBackup
-
+from horizon.views import APIView
+from horizon import exceptions
 
 LOG = logging.getLogger(__name__)
 
@@ -61,15 +60,18 @@ class IndexView(tables.DataTableView):
         try:
             backups = api.backup_list(self.request, marker=marker)
             backups = map(self._get_extra_data, backups)
-            # TODO: (rmyers) Pagination is broken in trove api.
+            LOG.info(msg=_("Obtaining all backups "
+                           "at %s class" % repr(IndexView.__class__)))
             self._more = False
+        # TODO: (rmyers) Pagination is broken in trove api.
         except:
             self._more = False
             backups = []
-            exceptions.handle(self.request,
-                              _('Unable to retrieve backups.'))
+            LOG.critical(msg=_("Exception while obtaining "
+                               "all backups at %s class"
+                               % repr(IndexView.__class__)))
         return backups
-
+        # Gather all the instances for these backups
 
 
 class BackupView(workflows.WorkflowView):

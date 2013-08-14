@@ -47,22 +47,32 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        marker = self.request.GET.get(InstancesTable._meta.pagination_param, None)
+        marker = self.request.GET. \
+            get(InstancesTable._meta.pagination_param, None)
         # Gather our instances
         try:
             instances = api.instance_list(self.request, marker=marker)
+            LOG.info(msg=_("Obtaining instances at %s class"
+                           % repr(IndexView.__class__)))
             self._more = False
         except:
             self._more = False
             instances = []
-            exceptions.handle(self.request,
-                              _('Unable to retrieve instances.'))
+            LOG.critical("Http 500. Internal server error. "
+                         "Unable to retrieve instances.")
+            return instances
+            #exceptions.handle(self.request, ignore=True)
             # Gather our flavors and correlate our instances to them
         if instances:
             try:
                 flavors = api.flavor_list(self.request)
+                LOG.info(msg=_("Obtaining flavor list from nova at %s class"
+                               % repr(IndexView.__class__)))
             except:
                 flavors = []
+                LOG.critical(msg=_("Nova exception while obtaining "
+                                   "flavor list at % class"
+                                   % repr(IndexView.__class__)))
                 exceptions.handle(self.request, ignore=True)
 
             full_flavors = SortedDict([(str(flavor.id), flavor)
@@ -79,7 +89,9 @@ class IndexView(tables.DataTableView):
                         instance.full_flavor = api.flavor_get(
                             self.request, flavor_id)
                 except:
-                    msg = _('Unable to retrieve instance size information.')
+                    msg = _('Unable to retrieve instance size information')
+                    LOG.critical(msg + _(" at %s class"
+                                         % repr(IndexView.__class__)))
                     exceptions.handle(self.request, msg)
         return instances
 
@@ -110,15 +122,19 @@ class DetailView(tabs.TabbedTableView):
             try:
                 instance_id = self.kwargs['instance_id']
                 instance = api.instance_get(self.request, instance_id)
+                LOG.info(msg=_("Obtaining instance for detailed view "
+                               "at %s class" % repr(DetailView.__class__)))
                 instance.full_flavor = api.flavor_get(
                     self.request, instance.flavor["id"])
             except:
                 redirect = reverse('horizon:database:databases:index')
+                LOG.critical(msg=_("Exception while btaining instance"
+                                   " for detailed view at %s class"
+                                   % repr(DetailView.__class__)))
                 exceptions.handle(self.request,
                                   _('Unable to retrieve details for '
                                     'instance "%s".') % instance_id,
                                   redirect=redirect)
-
             self._instance = instance
         return self._instance
 
