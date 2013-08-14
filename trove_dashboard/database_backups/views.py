@@ -49,7 +49,7 @@ class IndexView(tables.DataTableView):
         instance = self._instances.get(instance_id)
         if instance is None:
             try:
-                instance = api.instance_get(self.request, instance_id)
+                instance = api.trove.instance_get(self.request, instance_id)
             except:
                 instance = _('Not Found')
         backup.instance = instance
@@ -58,12 +58,12 @@ class IndexView(tables.DataTableView):
     def get_data(self):
         marker = self.request.GET.get(BackupsTable._meta.pagination_param)
         try:
-            backups = api.backup_list(self.request, marker=marker)
+            backups = api.trove.backup_list(self.request, marker=marker)
             backups = map(self._get_extra_data, backups)
             LOG.info(msg=_("Obtaining all backups "
                            "at %s class" % repr(IndexView.__class__)))
             self._more = False
-        # TODO: (rmyers) Pagination is broken in trove api.
+        # TODO: (rmyers) Pagination is broken in trove api.trove.
         except:
             self._more = False
             backups = []
@@ -96,7 +96,7 @@ class DetailView(APIView):
     def get_data(self, request, context, *args, **kwargs):
         backup_id = kwargs.get("backup_id")
         try:
-            backup = api.backup_get(request, backup_id)
+            backup = api.trove.backup_get(request, backup_id)
             backup.created_at = parse_date(backup.created)
             backup.updated_at = parse_date(backup.updated)
             backup.duration = backup.updated_at - backup.created_at
@@ -104,7 +104,7 @@ class DetailView(APIView):
             exceptions.handle(request,
                               _('Unable to retrieve backup.'))
         try:
-            instance = api.instance_get(request, backup.instance_id)
+            instance = api.trove.instance_get(request, backup.instance_id)
         except:
             instance = None
         context['backup'] = backup

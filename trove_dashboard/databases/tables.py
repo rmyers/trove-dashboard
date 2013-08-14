@@ -26,9 +26,9 @@ from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
 
 from trove_dashboard import api
-from ..backup.tables import LaunchLink as LaunchBackup
-from ..backup.tables import DeleteBackup
-from ..backup.tables import RestoreLink
+from ..database_backups.tables import LaunchLink as LaunchBackup
+from ..database_backups.tables import DeleteBackup
+from ..database_backups.tables import RestoreLink
 
 
 LOG = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ class TerminateInstance(tables.BatchAction):
         return True
 
     def action(self, request, obj_id):
-        api.instance_delete(request, obj_id)
+        api.trove.instance_delete(request, obj_id)
 
 
 class RestartInstance(tables.BatchAction):
@@ -82,7 +82,7 @@ class RestartInstance(tables.BatchAction):
                  or instance.status == 'SHUTOFF'))
 
     def action(self, request, obj_id):
-        api.instance_restart(request, obj_id)
+        api.trove.instance_restart(request, obj_id)
 
 
 class DeleteUser(tables.DeleteAction):
@@ -94,7 +94,7 @@ class DeleteUser(tables.DeleteAction):
 
     def delete(self, request, obj_id):
         datum = self.table.get_object_by_id(obj_id)
-        api.users_delete(request, datum.instance.id, datum.name)
+        api.trove.users_delete(request, datum.instance.id, datum.name)
 
 
 class DeleteDatabase(tables.DeleteAction):
@@ -106,7 +106,7 @@ class DeleteDatabase(tables.DeleteAction):
 
     def delete(self, request, obj_id):
         datum = self.table.get_object_by_id(obj_id)
-        api.database_delete(request, datum.instance.id, datum.name)
+        api.trove.database_delete(request, datum.instance.id, datum.name)
 
 
 class LaunchLink(tables.LinkAction):
@@ -122,7 +122,7 @@ class LaunchLink(tables.LinkAction):
 class CreateBackup(tables.LinkAction):
     name = "backup"
     verbose_name = _("Create Backup")
-    url = "horizon:database:backups:create"
+    url = "horizon:database:database_backups:create"
     classes = ("ajax-modal", "btn-camera")
 
     def allowed(self, request, instance=None):
@@ -137,8 +137,8 @@ class UpdateRow(tables.Row):
     ajax = True
 
     def get_data(self, request, instance_id):
-        instance = api.instance_get(request, instance_id)
-        instance.full_flavor = api.flavor_get(request, instance.flavor['id'])
+        instance = api.trove.instance_get(request, instance_id)
+        instance.full_flavor = api.trove.flavor_get(request, instance.flavor['id'])
         return instance
 
 
@@ -237,7 +237,7 @@ class InstanceBackupsTable(tables.DataTable):
         ('foo', 'Bar'),
     )
     name = tables.Column("name",
-                         link=("horizon:database:backups:detail"),
+                         link=("horizon:database:database_backups:detail"),
                          verbose_name=_("Name"))
     created = tables.Column("created", verbose_name=_("Created At"),
                             filters=None)

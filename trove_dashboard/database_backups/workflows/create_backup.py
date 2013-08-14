@@ -41,7 +41,7 @@ class BackupDetailsAction(workflows.Action):
         help_text_template = ("dbaas/_backup_details_help.html")
 
     def populate_instance_choices(self, request, context):
-        instances = api.instance_list(request, limit=100)
+        instances = api.trove.instance_list(request, limit=100)
         LOG.info(msg=_("Obtaining list of instances with limit 100 per page at %s class "
                        % repr(BackupDetailsAction.__class__)))
         return [(i.id, i.name) for i in instances]
@@ -58,7 +58,7 @@ class CreateBackup(workflows.Workflow):
     finalize_button_name = _("Backup")
     success_message = _('Scheduled backup "%(name)s".')
     failure_message = _('Unable to launch %(count)s named "%(name)s".')
-    success_url = "horizon:database:backups:index"
+    success_url = "horizon:database:database_backups:index"
     default_steps = [SetBackupDetails]
 
     def get_initial(self):
@@ -71,7 +71,7 @@ class CreateBackup(workflows.Workflow):
 
     def handle(self, request, context):
         try:
-            api.backup_create(request,
+            api.trove.backup_create(request,
                               context['name'],
                               context['instance'],
                               context['description'])

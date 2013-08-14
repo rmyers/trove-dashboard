@@ -23,7 +23,7 @@ from trove_dashboard import dashboard
 
 class Backups(horizon.Panel):
     name = _("Backups")
-    slug = 'backups'
+    slug = 'database_backups'
     permissions = ('openstack.services.database',
                    'openstack.services.object-store',)
 

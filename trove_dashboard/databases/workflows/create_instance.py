@@ -23,10 +23,9 @@ from horizon import exceptions
 from horizon import forms
 from horizon import workflows
 
-from openstack_dashboard import api
 from openstack_dashboard.usage import quotas
 
-from trove_dashboard import api as rd_api
+from trove_dashboard import api
 
 
 LOG = logging.getLogger(__name__)
@@ -138,7 +137,7 @@ class RestoreAction(workflows.Action):
     def populate_backup_choices(self, request, context):
         empty = [('', '-')]
         try:
-            backups = rd_api.backup_list(request)
+            backups = api.trove.backup_list(request)
 
             backup_list = [(b.id, b.name) for b in backups]
         except:
@@ -151,7 +150,7 @@ class RestoreAction(workflows.Action):
             try:
                 # Make sure the user is not "hacking" the form
                 # and that they have access to this backup_id
-                bkup = rd_api.backup_get(self.request, backup)
+                bkup = api.trove.backup_get(self.request, backup)
                 LOG.info(msg=_("Obtaining backups at %s class" % repr(RestoreAction.__class__)))
                 self.cleaned_data['backup'] = bkup.id
             except:
@@ -206,13 +205,13 @@ class LaunchInstance(workflows.Workflow):
 
     def handle(self, request, context):
         try:
-            rd_api.instance_create(request,
-                                   context['name'],
-                                   context['volume'],
-                                   context['flavor'],
-                                   databases=self._get_databases(context),
-                                   users=self._get_users(context),
-                                   restore_point=self._get_backup(context))
+            api.trove.instance_create(request,
+                                      context['name'],
+                                      context['volume'],
+                                      context['flavor'],
+                                      databases=self._get_databases(context),
+                                      users=self._get_users(context),
+                                      restore_point=self._get_backup(context))
             LOG.info(msg=_("Launching instance with parameters "
                            "{name=%s, volume=%s, flavor=%s, dbs=%s, users=%s, backups=%s} at %s class"
                            % (context['name'], context['volume'], context['flavor'],

@@ -44,7 +44,7 @@ def date(string):
 class LaunchLink(tables.LinkAction):
     name = "create"
     verbose_name = _("Create Backup")
-    url = "horizon:database:backups:create"
+    url = "horizon:database:database_backups:create"
     classes = ("btn-launch", "ajax-modal")
 
     def allowed(self, request, datum):
@@ -74,15 +74,15 @@ class DeleteBackup(tables.BatchAction):
         return True
 
     def action(self, request, obj_id):
-        api.backup_delete(request, obj_id)
+        api.trove.backup_delete(request, obj_id)
 
 
 class UpdateRow(tables.Row):
     ajax = True
 
     def get_data(self, request, backup_id):
-        backup = api.backup_get(request, backup_id)
-        backup.instance = api.instance_get(request, backup.instanceRef)
+        backup = api.trove.backup_get(request, backup_id)
+        backup.instance = api.trove.instance_get(request, backup.instanceRef)
         return backup
 
 
@@ -113,7 +113,7 @@ class BackupsTable(tables.DataTable):
         ('foo', 'Bar'),
     )
     name = tables.Column("name",
-                         link=("horizon:database:backups:detail"),
+                         link=("horizon:database:database_backups:detail"),
                          verbose_name=_("Name"))
     created = tables.Column("created", verbose_name=_("Created At"),
                             filters=[date])

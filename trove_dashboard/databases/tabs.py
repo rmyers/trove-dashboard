@@ -45,10 +45,10 @@ class UserTab(tabs.TableTab):
     def get_users_data(self):
         instance = self.tab_group.kwargs['instance']
         try:
-            data = api.users_list(self.request, instance.id)
+            data = api.trove.users_list(self.request, instance.id)
             for user in data:
                 user.instance = instance
-                user.access = api.user_list_access(self.request, instance.id, user.name)
+                user.access = api.trove.user_list_access(self.request, instance.id, user.name)
         except:
             data = []
         return data
@@ -65,7 +65,7 @@ class DatabaseTab(tabs.TableTab):
     def get_databases_data(self):
         instance = self.tab_group.kwargs['instance']
         try:
-            data = api.database_list(self.request, instance.id)
+            data = api.trove.database_list(self.request, instance.id)
             add_instance = lambda d: setattr(d, 'instance', instance)
             map(add_instance, data)
         except:
@@ -84,7 +84,7 @@ class BackupsTab(tabs.TableTab):
     def get_backups_data(self):
         instance = self.tab_group.kwargs['instance']
         try:
-            data = api.instance_backups(self.request, instance.id)
+            data = api.trove.instance_backups(self.request, instance.id)
         except:
             data = []
         return data

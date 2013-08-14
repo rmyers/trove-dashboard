@@ -51,7 +51,7 @@ class IndexView(tables.DataTableView):
             get(InstancesTable._meta.pagination_param, None)
         # Gather our instances
         try:
-            instances = api.instance_list(self.request, marker=marker)
+            instances = api.trove.instance_list(self.request, marker=marker)
             LOG.info(msg=_("Obtaining instances at %s class"
                            % repr(IndexView.__class__)))
             self._more = False
@@ -65,7 +65,7 @@ class IndexView(tables.DataTableView):
             # Gather our flavors and correlate our instances to them
         if instances:
             try:
-                flavors = api.flavor_list(self.request)
+                flavors = api.trove.flavor_list(self.request)
                 LOG.info(msg=_("Obtaining flavor list from nova at %s class"
                                % repr(IndexView.__class__)))
             except:
@@ -85,8 +85,8 @@ class IndexView(tables.DataTableView):
                         instance.full_flavor = full_flavors[flavor_id]
                     else:
                         # If the flavor_id is not in full_flavors list,
-                        # get it via nova api.
-                        instance.full_flavor = api.flavor_get(
+                        # get it via nova api.trove.
+                        instance.full_flavor = api.trove.flavor_get(
                             self.request, flavor_id)
                 except:
                     msg = _('Unable to retrieve instance size information')
@@ -121,10 +121,10 @@ class DetailView(tabs.TabbedTableView):
         if not hasattr(self, "_instance"):
             try:
                 instance_id = self.kwargs['instance_id']
-                instance = api.instance_get(self.request, instance_id)
+                instance = api.trove.instance_get(self.request, instance_id)
                 LOG.info(msg=_("Obtaining instance for detailed view "
                                "at %s class" % repr(DetailView.__class__)))
-                instance.full_flavor = api.flavor_get(
+                instance.full_flavor = api.trove.flavor_get(
                     self.request, instance.flavor["id"])
             except:
                 redirect = reverse('horizon:database:databases:index')
