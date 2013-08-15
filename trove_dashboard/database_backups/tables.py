@@ -83,7 +83,8 @@ class UpdateRow(tables.Row):
     def get_data(self, request, backup_id):
         backup = api.trove.backup_get(request, backup_id)
         try:
-            backup.instance = api.trove.instance_get(request, backup.instance_id)
+            backup.instance = api.trove.instance_get(request,
+                                                     backup.instance_id)
         except:
             pass
         return backup
@@ -94,7 +95,7 @@ def db_link(obj):
         return
     if hasattr(obj.instance, 'name'):
         return reverse(
-            'horizon:project:databases:detail', 
+            'horizon:project:databases:detail',
             kwargs={'instance_id': obj.instance_id})
 
 

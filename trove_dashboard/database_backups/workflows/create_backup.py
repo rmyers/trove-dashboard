@@ -14,7 +14,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import logging
 
 from django.utils.translation import ugettext_lazy as _
@@ -38,12 +37,12 @@ class BackupDetailsAction(workflows.Action):
 
     class Meta:
         name = _("Details")
-        help_text_template = ("project/database_backups/_backup_details_help.html")
+        help_text_template = \
+            "project/database_backups/_backup_details_help.html"
 
     def populate_instance_choices(self, request, context):
+        LOG.info("Obtaining list of instances with limit 100 per page")
         instances = api.trove.instance_list(request, limit=100)
-        LOG.info(msg=_("Obtaining list of instances with limit 100 per page at %s class "
-                       % repr(BackupDetailsAction.__class__)))
         return [(i.id, i.name) for i in instances]
 
 
@@ -71,14 +70,13 @@ class CreateBackup(workflows.Workflow):
 
     def handle(self, request, context):
         try:
+            LOG.info("Creating backup")
             api.trove.backup_create(request,
                               context['name'],
                               context['instance'],
                               context['description'])
-            LOG.info(msg=_("Creating backup at %s class" % repr(CreateBackup.__class__)))
             return True
         except:
-            LOG.critical(_("Exception while creating backup at %s class"
-                           % repr(CreateBackup.__class__)))
+            LOG.exception("Exception while creating backup")
             exceptions.handle(request)
             return False

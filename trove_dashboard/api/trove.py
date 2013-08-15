@@ -103,6 +103,7 @@ def flavor_get(request, flavor_id):
 def users_list(request, instance_id):
     return rdclient(request).users.list(instance_id)
 
+
 def user_delete(request, instance_id, user):
     return rdclient(request).users.delete(instance_id, user)
 

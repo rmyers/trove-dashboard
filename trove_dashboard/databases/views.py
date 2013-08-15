@@ -111,7 +111,6 @@ class DetailView(tabs.TabbedTableView):
     tab_group_class = InstanceDetailTabs
     template_name = 'project/databases/detail.html'
 
-
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
         context["instance"] = self.get_data()

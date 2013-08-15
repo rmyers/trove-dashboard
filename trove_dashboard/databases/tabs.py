@@ -49,7 +49,9 @@ class UserTab(tabs.TableTab):
             data = api.trove.users_list(self.request, instance.id)
             for user in data:
                 user.instance = instance
-                user.access = api.trove.user_list_access(self.request, instance.id, user.name)
+                user.access = api.trove.user_list_access(self.request,
+                                                         instance.id,
+                                                         user.name)
         except:
             data = []
         return data

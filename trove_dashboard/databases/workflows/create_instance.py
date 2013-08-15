@@ -47,14 +47,12 @@ class SetInstanceDetailsAction(workflows.Action):
 
     def populate_flavor_choices(self, request, context):
         try:
+            LOG.debug("Obtaining flavors list")
             flavors = api.nova.flavor_list(request)
-            LOG.info(msg=_("Obtaining flavors list at %s class"
-                           % repr(SetInstanceDetailsAction.__class__)))
             flavor_list = [(flavor.id, "%s" % flavor.name)
                            for flavor in flavors]
         except:
-            LOG.critical(msg=_("Exception while obtaining flavors list at %s class"
-                               % repr(SetInstanceDetailsAction.__class__)))
+            LOG.exception("Exception while obtaining flavors list")
             flavor_list = []
             exceptions.handle(request,
                               _('Unable to retrieve instance flavors.'))
@@ -63,15 +61,14 @@ class SetInstanceDetailsAction(workflows.Action):
     def get_help_text(self):
         extra = {}
         try:
+            LOG.debug("Obtaining absolute tenant limits")
             extra['usages'] = api.nova.tenant_absolute_limits(self.request)
-            LOG.info(msg=_("Obtaining absolute tenant limits at %s class" % repr(SetInstanceDetailsAction.__class__)))
             extra['usages_json'] = json.dumps(extra['usages'])
             flavors = json.dumps([f._info for f in
                                   api.nova.flavor_list(self.request)])
             extra['flavors'] = flavors
         except:
-            LOG.critical(msg=_("Exception while obtaining absolute tenant limits at %s class"
-                               % repr(SetInstanceDetailsAction.__class__)))
+            LOG.exception("Error obtaining absolute tenant limits")
             exceptions.handle(self.request,
                               _("Unable to retrieve quota information."))
         return super(SetInstanceDetailsAction, self).get_help_text(extra)
@@ -90,7 +87,7 @@ class SetInstanceDetails(workflows.Step):
 class AddDatabasesAction(workflows.Action):
     """
     Initialize the database with users/databases. This tab will honor
-    the settings which should be a list of permissions required: 
+    the settings which should be a list of permissions required:
 
     * TROVE_ADD_USER_PERMS = []
     * TROVE_ADD_DATABASE_PERMS = []
@@ -113,7 +110,7 @@ class AddDatabasesAction(workflows.Action):
     class Meta:
         name = _("Initialize Databases")
         permissions = TROVE_ADD_PERMS
-        help_text_template = ("project/databases/_launch_initialize_help.html")
+        help_text_template = "project/databases/_launch_initialize_help.html"
 
     def clean(self):
         cleaned_data = super(AddDatabasesAction, self).clean()
@@ -122,7 +119,8 @@ class AddDatabasesAction(workflows.Action):
                 msg = _('You must specify a password if you create a user.')
                 self._errors["password"] = self.error_class([msg])
             if not cleaned_data.get('databases'):
-                msg = _('You must specify at least one database if you create a user.')
+                msg = _('You must specify at least one database if '
+                        'you create a user.')
                 self._errors["databases"] = self.error_class([msg])
         return cleaned_data
 
@@ -140,7 +138,7 @@ class RestoreAction(workflows.Action):
     class Meta:
         name = _("Restore From Backup")
         permissions = ('openstack.services.object-store',)
-        help_text_template = ("project/databases/_launch_restore_help.html")
+        help_text_template = "project/databases/_launch_restore_help.html"
 
     def populate_backup_choices(self, request, context):
         empty = [('', '-')]
@@ -158,11 +156,11 @@ class RestoreAction(workflows.Action):
             try:
                 # Make sure the user is not "hacking" the form
                 # and that they have access to this backup_id
+                LOG.debug("Obtaining backups")
                 bkup = api.trove.backup_get(self.request, backup)
-                LOG.info(msg=_("Obtaining backups at %s class" % repr(RestoreAction.__class__)))
                 self.cleaned_data['backup'] = bkup.id
             except:
-                LOG.critical(msg=_("Exception while obtaining backups at %s class" % repr(RestoreAction.__class__)))
+                LOG.exception("Exception while obtaining backups")
                 raise forms.ValidationError(_("Unable to find backup!"))
         return backup
 
@@ -213,6 +211,12 @@ class LaunchInstance(workflows.Workflow):
 
     def handle(self, request, context):
         try:
+            LOG.info("Launching instance with parameters "
+                     "{name=%s, volume=%s, flavor=%s, dbs=%s, users=%s, "
+                     "backups=%s}",
+                     context['name'], context['volume'], context['flavor'],
+                     self._get_databases(context), self._get_users(context),
+                     self._get_backup(context))
             api.trove.instance_create(request,
                                       context['name'],
                                       context['volume'],
@@ -220,17 +224,8 @@ class LaunchInstance(workflows.Workflow):
                                       databases=self._get_databases(context),
                                       users=self._get_users(context),
                                       restore_point=self._get_backup(context))
-            LOG.info(msg=_("Launching instance with parameters "
-                           "{name=%s, volume=%s, flavor=%s, dbs=%s, users=%s, backups=%s} at %s class"
-                           % (context['name'], context['volume'], context['flavor'],
-                              self._get_databases(context), self._get_users(context),
-                              self._get_backup(context), repr(LaunchInstance.__class__))))
             return True
         except:
-            LOG.critical(msg=_("Exception while launching instance with parameters "
-                               "{name=%s, volume=%s, flavor=%s, dbs=%s, users=%s, backups=%s} at %s class"
-                               % (context['name'], context['volume'], context['flavor'],
-                                  self._get_databases(context), self._get_users(context),
-                                  self._get_backup(context), repr(LaunchInstance.__class__))))
+            LOG.exception("Exception while launching instance")
             exceptions.handle(request)
             return False

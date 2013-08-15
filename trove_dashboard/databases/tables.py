@@ -17,8 +17,7 @@
 import logging
 
 from django.core import urlresolvers
-from django.core.urlresolvers import reverse
-from django.template.defaultfilters import title, join
+from django.template.defaultfilters import title
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
@@ -138,7 +137,8 @@ class UpdateRow(tables.Row):
 
     def get_data(self, request, instance_id):
         instance = api.trove.instance_get(request, instance_id)
-        instance.full_flavor = api.trove.flavor_get(request, instance.flavor['id'])
+        instance.full_flavor = api.trove.flavor_get(request,
+                                                    instance.flavor['id'])
         return instance
 
 
