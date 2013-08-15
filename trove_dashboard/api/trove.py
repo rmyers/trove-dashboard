@@ -3,15 +3,9 @@ Simple Trove API
 ===================
 This is meant to be a simple wrapper around the Trove API.
 """
-import logging
+
 from troveclient import client
 from troveclient.auth import ServiceCatalog
-from trove_dashboard.utils.horizon_attrs import get_horizon_parameter
-
-LOG = logging.getLogger(__name__)
-
-client._logger.setLevel(
-    get_horizon_parameter('TROVE_LOGLEVEL', logging.CRITICAL))
 
 
 class TokenAuth(object):
@@ -40,7 +34,7 @@ class TokenAuth(object):
 
 def rdclient(request):
     rdc = client.Dbaas(username=request.user,
-                       api_key='fake_api_key',
+                       api_key=None,
                        auth_strategy=TokenAuth)
     return rdc
 
