@@ -1,74 +1,253 @@
-commit 2e1401e398da2b26c9631b686e121b5ceb2741ce
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 18:29:46 2013 +0300
+commit 7e0003fc32b45eb849ca2cb82e5dda031e626771
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Wed Aug 14 17:22:54 2013 -0500
 
-    road to tox tests
+    Refactoring panel names to better merge with horizon.
 
-commit 3b0fc75583838aeeaef86a59e79671065a3437d1
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 17:37:53 2013 +0300
+commit d2aaf74b14cb269833ad23f9c747386f08cfeaa6
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Wed Aug 14 15:33:42 2013 -0500
 
-    removing unused tool directory
+    Adding object-store to the permissions for backups panel.
 
-commit 7a83e5371edfddc2a9aa47d63b8b915e1e229d99
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 17:36:11 2013 +0300
+commit 64851102cac6767ef01ddea9542870f47bfb33aa
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Wed Aug 14 15:27:39 2013 -0500
 
-    clean-up
+    Squashed commit of the following:
+    
+    commit 5da2a62f501656bac05542c4777c37464b5daec5
+    Merge: ac06b1d 65036a7
+    Author: Robert Myers <robert.myers@rackspace.com>
+    Date:   Wed Aug 14 15:26:34 2013 -0500
+    
+        Merge remote-tracking branch 'crazymac/master' into merger
+    
+        Conflicts:
+        	requirements.txt
+    
+    commit 65036a7c4c487a0a852ab9b21044df347d25a219
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 15:43:50 2013 +0300
+    
+        Logging issue fix
+    
+    commit e5a8aaac1ebc132e54220215d3fc88561b8e3bd8
+    Merge: 4b21ae8 7aeeaac
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 15:26:11 2013 +0300
+    
+        crazy merge
+    
+    commit 4b21ae88e1ac8a03f17b16ca62391e089f5f4a15
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 15:14:39 2013 +0300
+    
+        pip-reqs fix
+    
+    commit 890b99f2473dcd2116de48db772b881a9c02fcab
+    Merge: 546008f 9b2db7a
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 15:11:54 2013 +0300
+    
+        Merge branch 'develop'
+    
+    commit 9b2db7acbc9dc18290c04ae0fa21935242eda425
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 15:07:34 2013 +0300
+    
+        fixind issue with troveclient name
+    
+    commit 48aaec4f9de694c8ec72865e79d86b809fac8bff
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 15:03:02 2013 +0300
+    
+        Removing database info from the overview tab.
+    
+    commit da7d0a1ec2f17181a896ddcb95ce99fbeda0ed8b
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 15:02:24 2013 +0300
+    
+        Adding permissions to the panels.
+    
+    commit caac46005244368bb3fcf3f2da8a237744fa81c0
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 14:57:48 2013 +0300
+    
+        Adding a Backup details view and better handling in backup index.
+    
+    commit 071a6997b500e6353409d7de00e333bd180e71a7
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Wed Aug 14 14:55:07 2013 +0300
+    
+        adding tox.ini template
+    
+    commit 546008fae99eba79a8aa863329325c939d6cd40d
+    Author: Denis Makogon <dmakogon@mirantis.com>
+    Date:   Tue Aug 13 19:09:09 2013 +0300
+    
+        Addig AUTHORS and ChangeLog under git controll
+    
+    commit 17ec3a966fe9bef823deb6f8a1041bbc95cf4111
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 19:04:54 2013 +0300
+    
+        PEP8 backup package clean-up
+    
+    commit 89ff1ac7158878e1ed0acdfe0f5541eec737ce42
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 19:02:08 2013 +0300
+    
+        PEP8 dbaas package clean-up
+    
+    commit fa0778e2ba0f05f856264c14fc7599bb513b91de
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 18:50:19 2013 +0300
+    
+        dressing up whole code for PEP8 requirements
+    
+    commit 2e1401e398da2b26c9631b686e121b5ceb2741ce
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 18:29:46 2013 +0300
+    
+        road to tox tests
+    
+    commit 3b0fc75583838aeeaef86a59e79671065a3437d1
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 17:37:53 2013 +0300
+    
+        removing unused tool directory
+    
+    commit 7a83e5371edfddc2a9aa47d63b8b915e1e229d99
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 17:36:11 2013 +0300
+    
+        clean-up
+    
+    commit 78b2b98b295d73f76093432ac60fe2a447e020d4
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 17:30:11 2013 +0300
+    
+        Updation logging
+    
+    commit dde21ada754fb4eecd74e6ccf506348e40b6a007
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 16:25:30 2013 +0300
+    
+        covering instances workflow with logging
+    
+    commit 904e2ebe0f65861aff6970d2372a0d7759a7ad6d
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 16:24:55 2013 +0300
+    
+        covering backups workflow with logging
+    
+    commit c5d76f26bfc858e119eb006ca6756e0397299ce9
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 16:10:44 2013 +0300
+    
+        Adding logging process to backup processing view code
+    
+    commit 7a6b136730bc8cffd79647343acc8e2cc25ae540
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 16:04:00 2013 +0300
+    
+        clean-up
+    
+    commit 645282d24174ad7779486eaa20b1b7ef4b829678
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 14:45:58 2013 +0300
+    
+        clean-up
+    
+    commit e6548258855002edea5bc774e12e6d78f37868a4
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 14:45:04 2013 +0300
+    
+        adding logging process to IndexView/DetailView
+    
+    commit 21e905f4ec9eeede810c66c28efa125770610115
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Tue Aug 13 14:33:30 2013 +0300
+    
+        Rewriting instance obtaining exception handler, changing exception handling to Non-critical with logging message
+    
+    commit 5a1a20654567f9c4cde9ae1ea9709cfeac8c257a
+    Author: crazymac <lildee1991@gmail.com>
+    Date:   Mon Aug 12 18:14:20 2013 +0300
+    
+        refactoring, removing unused tool package
 
-commit 78b2b98b295d73f76093432ac60fe2a447e020d4
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 17:30:11 2013 +0300
+commit ac06b1d0e408918bb043cdc400d4dad98c8bf4ee
+Merge: 0b6d927 ae70193
+Author: Robert Myers <myer0052@gmail.com>
+Date:   Wed Aug 14 11:16:57 2013 -0700
 
-    Updation logging
+    Merge pull request #25 from AndreaGiardini/master
+    
+    Correct backup_details page. Backup duration was not correctly displayed
 
-commit dde21ada754fb4eecd74e6ccf506348e40b6a007
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 16:25:30 2013 +0300
+commit 0b6d92741268236e17edb67a6444a5929738336a
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Wed Aug 14 13:15:55 2013 -0500
 
-    covering instances workflow with logging
+    Adding a backups tab to the instance tabs.
 
-commit 904e2ebe0f65861aff6970d2372a0d7759a7ad6d
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 16:24:55 2013 +0300
+commit ae70193b9c32e7c211b7d166ca3f6239c5d57c55
+Author: Andrea Giardini <contact@andreagiardini.com>
+Date:   Wed Aug 14 18:07:05 2013 +0200
 
-    covering backups workflow with logging
+    Backup duration is displayed correctly
+    
+    Fixes #24
 
-commit c5d76f26bfc858e119eb006ca6756e0397299ce9
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 16:10:44 2013 +0300
+commit 1d0ad3cbd8c8d7030e71eb00f2e64f6b4c04668a
+Merge: 7aeeaac 56c211b
+Author: Robert Myers <myer0052@gmail.com>
+Date:   Wed Aug 14 07:27:40 2013 -0700
 
-    Adding logging process to backup processing view code
+    Merge pull request #21 from AndreaGiardini/master
+    
+    Requirements.txt fix
 
-commit 7a6b136730bc8cffd79647343acc8e2cc25ae540
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 16:04:00 2013 +0300
+commit 56c211bf8d29cf327849dcaaff474bd594694685
+Author: Andrea Giardini <contact@andreagiardini.com>
+Date:   Wed Aug 14 11:49:40 2013 +0200
 
-    clean-up
+    Requirements.txt fix
 
-commit 645282d24174ad7779486eaa20b1b7ef4b829678
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 14:45:58 2013 +0300
+commit 7aeeaac364c7854d98464103f899037254f6fe57
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Tue Aug 13 13:23:14 2013 -0500
 
-    clean-up
+    Removing database info from the overview tab.
 
-commit e6548258855002edea5bc774e12e6d78f37868a4
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 14:45:04 2013 +0300
+commit 6743b1f666d30a0e35bbfefd7b0f93ce46d014eb
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Tue Aug 13 13:22:50 2013 -0500
 
-    adding logging process to IndexView/DetailView
+    Adding permissions to the panels.
 
-commit 21e905f4ec9eeede810c66c28efa125770610115
-Author: crazymac <lildee1991@gmail.com>
-Date:   Tue Aug 13 14:33:30 2013 +0300
+commit 7a15a23e9b14e5a082dd760fc74da8d106c37ef0
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Tue Aug 13 13:21:31 2013 -0500
 
-    Rewriting instance obtaining exception handler, changing exception handling to Non-critical with logging message
+    Adding a Backup details view and better handling in backup index.
 
-commit 5a1a20654567f9c4cde9ae1ea9709cfeac8c257a
-Author: crazymac <lildee1991@gmail.com>
-Date:   Mon Aug 12 18:14:20 2013 +0300
+commit aee0aec1723b51bfb274da867e67fcbe1ec10ece
+Author: Robert Myers <robert.myers@rackspace.com>
+Date:   Mon Aug 12 17:20:51 2013 -0500
 
-    refactoring, removing unused tool package
+    Start of user and database tabs. Refs #15
+
+commit 4b9fcf8d0029c25b8eb0979143fdac5e61763487
+Merge: 5eb704b 052ead4
+Author: Robert Myers <myer0052@gmail.com>
+Date:   Mon Aug 12 10:38:19 2013 -0700
+
+    Merge pull request #16 from crazymac/master
+    
+    Setup fix. Logging fix
 
 commit 052ead4e3a9be573a750511ca799146c7b0140d4
 Author: crazymac <lildee1991@gmail.com>
