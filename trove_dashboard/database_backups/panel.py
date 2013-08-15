@@ -18,14 +18,14 @@ from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
-from trove_dashboard import dashboard
+from openstack_dashboard.dashboards.project import dashboard
 
 
 class Backups(horizon.Panel):
-    name = _("Backups")
+    name = _("Database Backups")
     slug = 'database_backups'
     permissions = ('openstack.services.database',
                    'openstack.services.object-store',)
 
 
-dashboard.Dbaas.register(Backups)
+dashboard.Project.register(Backups)

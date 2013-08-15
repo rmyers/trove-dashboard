@@ -112,7 +112,7 @@ class DeleteDatabase(tables.DeleteAction):
 class LaunchLink(tables.LinkAction):
     name = "launch"
     verbose_name = _("Launch Instance")
-    url = "horizon:database:databases:launch"
+    url = "horizon:project:databases:launch"
     classes = ("btn-launch", "ajax-modal")
 
     def allowed(self, request, datum):
@@ -122,11 +122,11 @@ class LaunchLink(tables.LinkAction):
 class CreateBackup(tables.LinkAction):
     name = "backup"
     verbose_name = _("Create Backup")
-    url = "horizon:database:database_backups:create"
+    url = "horizon:project:database_backups:create"
     classes = ("ajax-modal", "btn-camera")
 
     def allowed(self, request, instance=None):
-        return instance.status in ACTIVE_STATES
+        return request.user.has_perm('openstack.services.object-store')
 
     def get_link_url(self, datam):
         url = urlresolvers.reverse(self.url)
@@ -174,7 +174,7 @@ class InstancesTable(tables.DataTable):
         ("error", False),
     )
     name = tables.Column("name",
-                         link=("horizon:database:databases:detail"),
+                         link=("horizon:project:databases:detail"),
                          verbose_name=_("Database Name"))
     ip = tables.Column(get_ips, verbose_name=_("IP Address"))
     size = tables.Column(get_size,
@@ -237,7 +237,7 @@ class InstanceBackupsTable(tables.DataTable):
         ('foo', 'Bar'),
     )
     name = tables.Column("name",
-                         link=("horizon:database:database_backups:detail"),
+                         link=("horizon:project:database_backups:detail"),
                          verbose_name=_("Name"))
     created = tables.Column("created", verbose_name=_("Created At"),
                             filters=None)

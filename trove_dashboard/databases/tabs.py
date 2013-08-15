@@ -28,7 +28,7 @@ from .tables import InstanceBackupsTable
 class OverviewTab(tabs.Tab):
     name = _("Overview")
     slug = "overview"
-    template_name = ("dbaas/_detail_overview.html")
+    template_name = ("project/databases/_detail_overview.html")
 
     def get_context_data(self, request):
         return {"instance": self.tab_group.kwargs['instance']}
@@ -88,6 +88,9 @@ class BackupsTab(tabs.TableTab):
         except:
             data = []
         return data
+
+    def allowed(self, request):
+        return request.user.has_perm('openstack.services.object-store')
 
 
 class InstanceDetailTabs(tabs.TabGroup):

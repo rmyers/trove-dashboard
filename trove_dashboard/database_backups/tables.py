@@ -44,7 +44,7 @@ def date(string):
 class LaunchLink(tables.LinkAction):
     name = "create"
     verbose_name = _("Create Backup")
-    url = "horizon:database:database_backups:create"
+    url = "horizon:project:database_backups:create"
     classes = ("btn-launch", "ajax-modal")
 
     def allowed(self, request, datum):
@@ -54,7 +54,7 @@ class LaunchLink(tables.LinkAction):
 class RestoreLink(tables.LinkAction):
     name = "restore"
     verbose_name = _("Restore Backup")
-    url = "horizon:database:databases:launch"
+    url = "horizon:project:databases:launch"
     classes = ("btn-launch", "ajax-modal")
 
     def get_link_url(self, datam):
@@ -91,7 +91,7 @@ def db_link(obj):
         return
     if hasattr(obj.instance, 'name'):
         return reverse(
-            'horizon:database:databases:detail', 
+            'horizon:project:databases:detail', 
             kwargs={'instance_id': obj.instance_id})
 
 
@@ -113,7 +113,7 @@ class BackupsTable(tables.DataTable):
         ('foo', 'Bar'),
     )
     name = tables.Column("name",
-                         link=("horizon:database:database_backups:detail"),
+                         link=("horizon:project:database_backups:detail"),
                          verbose_name=_("Name"))
     created = tables.Column("created", verbose_name=_("Created At"),
                             filters=[date])

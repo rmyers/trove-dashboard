@@ -33,8 +33,6 @@ LOG = logging.getLogger(__name__)
 
 class SetInstanceDetailsAction(workflows.Action):
     name = forms.CharField(max_length=80, label=_("Database Name"))
-    service_type = forms.ChoiceField(label=_("Service Type"),
-                                     help_text=_("Type of database"))
     flavor = forms.ChoiceField(label=_("Flavor"),
                                help_text=_("Size of image to launch."))
     volume = forms.IntegerField(label=_("Volume Size"),
@@ -44,12 +42,7 @@ class SetInstanceDetailsAction(workflows.Action):
 
     class Meta:
         name = _("Details")
-        #help_text_template = ("dbaas/_launch_details_help.html")
         help_text_template = ("project/instances/_launch_details_help.html")
-
-    def populate_service_type_choices(self, request, context):
-        # TODO: make an api call for this!
-        return [('mysql', 'mysql'), ('percona', 'percona')]
 
     def populate_flavor_choices(self, request, context):
         try:
@@ -85,7 +78,7 @@ class SetInstanceDetailsAction(workflows.Action):
 
 class SetInstanceDetails(workflows.Step):
     action_class = SetInstanceDetailsAction
-    contributes = ("name", "service_type", "volume", "flavor")
+    contributes = ("name", "volume", "flavor")
 
 
 class AddDatabasesAction(workflows.Action):
@@ -106,7 +99,7 @@ class AddDatabasesAction(workflows.Action):
 
     class Meta:
         name = _("Initialize Databases")
-        help_text_template = ("dbaas/_launch_initialize_help.html")
+        help_text_template = ("project/databases/_launch_initialize_help.html")
 
     def clean(self):
         cleaned_data = super(AddDatabasesAction, self).clean()
@@ -132,7 +125,8 @@ class RestoreAction(workflows.Action):
 
     class Meta:
         name = _("Restore From Backup")
-        help_text_template = ("dbaas/_launch_restore_help.html")
+        permissions = ('openstack.services.object-store',)
+        help_text_template = ("project/databases/_launch_restore_help.html")
 
     def populate_backup_choices(self, request, context):
         empty = [('', '-')]
@@ -170,7 +164,7 @@ class LaunchInstance(workflows.Workflow):
     finalize_button_name = _("Launch")
     success_message = _('Launched %(count)s named "%(name)s".')
     failure_message = _('Unable to launch %(count)s named "%(name)s".')
-    success_url = "horizon:database:databases:index"
+    success_url = "horizon:project:databases:index"
     default_steps = (SetInstanceDetails, InitializeDatabase, RestoreBackup)
 
     def format_status_message(self, message):

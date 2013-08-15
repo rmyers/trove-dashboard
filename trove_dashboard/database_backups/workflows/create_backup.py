@@ -38,7 +38,7 @@ class BackupDetailsAction(workflows.Action):
 
     class Meta:
         name = _("Details")
-        help_text_template = ("dbaas/_backup_details_help.html")
+        help_text_template = ("project/database_backups/_backup_details_help.html")
 
     def populate_instance_choices(self, request, context):
         instances = api.trove.instance_list(request, limit=100)
@@ -58,7 +58,7 @@ class CreateBackup(workflows.Workflow):
     finalize_button_name = _("Backup")
     success_message = _('Scheduled backup "%(name)s".')
     failure_message = _('Unable to launch %(count)s named "%(name)s".')
-    success_url = "horizon:database:database_backups:index"
+    success_url = "horizon:project:database_backups:index"
     default_steps = [SetBackupDetails]
 
     def get_initial(self):

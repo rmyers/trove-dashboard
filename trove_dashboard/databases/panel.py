@@ -18,7 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
-from trove_dashboard import dashboard
+from openstack_dashboard.dashboards.project import dashboard
 
 
 class Databases(horizon.Panel):
@@ -26,4 +26,5 @@ class Databases(horizon.Panel):
     slug = 'databases'
     permissions = ('openstack.services.database',)
 
-dashboard.Dbaas.register(Databases)
+
+dashboard.Project.register(Databases)

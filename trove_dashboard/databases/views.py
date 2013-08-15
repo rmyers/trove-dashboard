@@ -41,7 +41,7 @@ LOG = logging.getLogger(__name__)
 
 class IndexView(tables.DataTableView):
     table_class = InstancesTable
-    template_name = 'dbaas/index.html'
+    template_name = 'project/databases/index.html'
 
     def has_more_data(self, table):
         return self._more
@@ -98,7 +98,7 @@ class IndexView(tables.DataTableView):
 
 class LaunchInstanceView(workflows.WorkflowView):
     workflow_class = LaunchInstance
-    template_name = "dbaas/launch.html"
+    template_name = "project/databases/launch.html"
 
     def get_initial(self):
         initial = super(LaunchInstanceView, self).get_initial()
@@ -109,7 +109,7 @@ class LaunchInstanceView(workflows.WorkflowView):
 
 class DetailView(tabs.TabbedTableView):
     tab_group_class = InstanceDetailTabs
-    template_name = 'dbaas/detail.html'
+    template_name = 'project/databases/detail.html'
 
 
     def get_context_data(self, **kwargs):
@@ -127,7 +127,7 @@ class DetailView(tabs.TabbedTableView):
                 instance.full_flavor = api.trove.flavor_get(
                     self.request, instance.flavor["id"])
             except:
-                redirect = reverse('horizon:database:databases:index')
+                redirect = reverse('horizon:project:databases:index')
                 LOG.critical(msg=_("Exception while btaining instance"
                                    " for detailed view at %s class"
                                    % repr(DetailView.__class__)))

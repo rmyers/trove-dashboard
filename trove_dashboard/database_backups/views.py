@@ -36,7 +36,7 @@ LOG = logging.getLogger(__name__)
 
 class IndexView(tables.DataTableView):
     table_class = BackupsTable
-    template_name = 'dbaas/backup_index.html'
+    template_name = 'project/database_backups/index.html'
 
     def has_more_data(self, table):
         return self._more
@@ -76,7 +76,7 @@ class IndexView(tables.DataTableView):
 
 class BackupView(workflows.WorkflowView):
     workflow_class = CreateBackup
-    template_name = "dbaas/backup.html"
+    template_name = "project/database_backups/backup.html"
 
     def get_context_data(self, **kwargs):
         context = super(BackupView, self).get_context_data(**kwargs)
@@ -91,7 +91,7 @@ def parse_date(date_string):
 
 
 class DetailView(APIView):
-    template_name = "dbaas/backup_details.html"
+    template_name = "project/database_backups/details.html"
 
     def get_data(self, request, context, *args, **kwargs):
         backup_id = kwargs.get("backup_id")
