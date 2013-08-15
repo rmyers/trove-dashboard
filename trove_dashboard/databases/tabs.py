@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
@@ -53,6 +54,12 @@ class UserTab(tabs.TableTab):
             data = []
         return data
 
+    def allowed(self, request):
+        perms = getattr(settings, 'TROVE_ADD_USER_PERMS', [])
+        if perms:
+            return request.user.has_perms(perms)
+        return True
+
 
 class DatabaseTab(tabs.TableTab):
     table_classes = [DatabaseTable]
@@ -71,6 +78,12 @@ class DatabaseTab(tabs.TableTab):
         except:
             data = []
         return data
+
+    def allowed(self, request):
+        perms = getattr(settings, 'TROVE_ADD_DATABASE_PERMS', [])
+        if perms:
+            return request.user.has_perms(perms)
+        return True
 
 
 class BackupsTab(tabs.TableTab):

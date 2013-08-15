@@ -19,6 +19,7 @@ import simplejson as json
 import logging
 
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from horizon import exceptions
 from horizon import forms
 from horizon import workflows
@@ -76,12 +77,24 @@ class SetInstanceDetailsAction(workflows.Action):
         return super(SetInstanceDetailsAction, self).get_help_text(extra)
 
 
+TROVE_ADD_USER_PERMS = getattr(settings, 'TROVE_ADD_USER_PERMS', [])
+TROVE_ADD_DATABASE_PERMS = getattr(settings, 'TROVE_ADD_DATABASE_PERMS', [])
+TROVE_ADD_PERMS = TROVE_ADD_USER_PERMS + TROVE_ADD_DATABASE_PERMS
+
+
 class SetInstanceDetails(workflows.Step):
     action_class = SetInstanceDetailsAction
     contributes = ("name", "volume", "flavor")
 
 
 class AddDatabasesAction(workflows.Action):
+    """
+    Initialize the database with users/databases. This tab will honor
+    the settings which should be a list of permissions required: 
+
+    * TROVE_ADD_USER_PERMS = []
+    * TROVE_ADD_DATABASE_PERMS = []
+    """
     databases = forms.CharField(label=_('Initial Database'),
                                 required=False,
                                 help_text=_('Comma separated list of '
@@ -99,6 +112,7 @@ class AddDatabasesAction(workflows.Action):
 
     class Meta:
         name = _("Initialize Databases")
+        permissions = TROVE_ADD_PERMS
         help_text_template = ("project/databases/_launch_initialize_help.html")
 
     def clean(self):
