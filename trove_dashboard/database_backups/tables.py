@@ -82,7 +82,10 @@ class UpdateRow(tables.Row):
 
     def get_data(self, request, backup_id):
         backup = api.trove.backup_get(request, backup_id)
-        backup.instance = api.trove.instance_get(request, backup.instanceRef)
+        try:
+            backup.instance = api.trove.instance_get(request, backup.instance_id)
+        except:
+            pass
         return backup
 
 
@@ -103,14 +106,12 @@ def db_name(obj):
 
 class BackupsTable(tables.DataTable):
     STATUS_CHOICES = (
+        ("BUILDING", None),
         ("COMPLETED", True),
-        ("FAILED", True),
-        ("NEW", False),
-        ("paused", True),
-        ("error", False),
-    )
-    STATUS_DISPLAY_CHOICES = (
-        ('foo', 'Bar'),
+        ("DELETE_FAILED", False),
+        ("FAILED", False),
+        ("NEW", None),
+        ("SAVING", None),
     )
     name = tables.Column("name",
                          link=("horizon:project:database_backups:detail"),
@@ -126,8 +127,7 @@ class BackupsTable(tables.DataTable):
                            filters=(title, replace_underscores),
                            verbose_name=_("Status"),
                            status=True,
-                           status_choices=STATUS_CHOICES,
-                           display_choices=STATUS_DISPLAY_CHOICES)
+                           status_choices=STATUS_CHOICES)
 
     class Meta:
         name = "backups"
