@@ -1,3 +1,2 @@
-horizon
-django
+Django
 python-troveclient
