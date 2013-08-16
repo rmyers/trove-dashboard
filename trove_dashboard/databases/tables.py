@@ -157,6 +157,12 @@ def get_size(instance):
         return size_string % vals
     return _("Not available")
 
+def get_databases(user):
+    if hasattr(user, "access"):
+        databases = [db.name for db in user.access]
+        databases.sort()
+        return ', '.join(databases)
+    return _("-")
 
 STATUS_DISPLAY_CHOICES = (
     ("resize", "Resize/Migrate"),
@@ -200,7 +206,8 @@ class InstancesTable(tables.DataTable):
 class UsersTable(tables.DataTable):
     name = tables.Column("name", verbose_name=_("User Name"))
     host = tables.Column("host", verbose_name=_("Allowed Hosts"))
-    databases = tables.Column("databases", verbose_name=_("Databases"))
+    databases = tables.Column(get_databases,
+                              verbose_name=_("Databases"))
 
     class Meta:
         name = "users"
