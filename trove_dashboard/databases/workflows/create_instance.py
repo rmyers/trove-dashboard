@@ -183,13 +183,13 @@ class LaunchInstance(workflows.Workflow):
     def _get_databases(self, context):
         """Returns the initial databases for this instance."""
         databases = None
-        if context['databases']:
+        if 'databases' in context and context['databases']:
             databases = [{'name': d} for d in context['databases'].split(',')]
         return databases
 
     def _get_users(self, context):
         users = None
-        if context['user']:
+        if 'user' in context and context['user']:
             user = {
                 'name': context['user'],
                 'password': context['password'],
@@ -202,7 +202,7 @@ class LaunchInstance(workflows.Workflow):
 
     def _get_backup(self, context):
         backup = None
-        if context['backup']:
+        if 'backup' in context and context['backup']:
             backup = {'backupRef': context['backup']}
         return backup
 
