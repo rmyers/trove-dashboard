@@ -20,11 +20,7 @@ from django.template.defaultfilters import title
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from horizon.conf import HORIZON_CONFIG
-from horizon import exceptions
-from horizon import messages
 from horizon import tables
-from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
 
 from trove_dashboard import api

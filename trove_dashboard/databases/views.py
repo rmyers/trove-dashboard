@@ -31,8 +31,6 @@ from horizon import workflows
 from trove_dashboard import api
 from .tabs import InstanceDetailTabs
 from .tables import InstancesTable
-from .tables import DatabaseTable
-from .tables import UsersTable
 from .workflows import LaunchInstance
 
 

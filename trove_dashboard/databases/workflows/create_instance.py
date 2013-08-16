@@ -13,7 +13,6 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from collections import defaultdict
 
 import simplejson as json
 import logging
@@ -23,8 +22,6 @@ from django.conf import settings
 from horizon import exceptions
 from horizon import forms
 from horizon import workflows
-
-from openstack_dashboard.usage import quotas
 
 from trove_dashboard import api
 
