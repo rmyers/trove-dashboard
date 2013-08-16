@@ -28,7 +28,6 @@ from horizon.views import APIView
 from trove_dashboard import api
 from .tables import BackupsTable
 from .workflows import CreateBackup
-from horizon.views import APIView
 from horizon import exceptions
 
 LOG = logging.getLogger(__name__)

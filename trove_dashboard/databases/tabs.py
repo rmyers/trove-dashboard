@@ -17,7 +17,6 @@
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from horizon import exceptions
 from horizon import tabs
 
 from trove_dashboard import api
