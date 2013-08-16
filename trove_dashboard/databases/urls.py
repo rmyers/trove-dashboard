@@ -19,10 +19,9 @@ from django.conf.urls.defaults import patterns, url
 from .views import IndexView, DetailView, LaunchInstanceView
 
 
-urlpatterns = patterns('trove_dashboard.dbaas.views',
-                       url(r'^$', IndexView.as_view(),
-                           name='index'),
-                       url(r'^launch$', LaunchInstanceView.as_view(),
-                           name='launch'),
-                       url(r'^(?P<instance_id>[^/]+)/$', DetailView.as_view(),
-                           name='detail'),)
+urlpatterns = patterns(
+    '',
+    url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^launch$', LaunchInstanceView.as_view(), name='launch'),
+    url(r'^(?P<instance_id>[^/]+)/$', DetailView.as_view(), name='detail'),
+)
